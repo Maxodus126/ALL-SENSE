@@ -1,0 +1,17 @@
+<UserControl x:Class="AllSense.App.RingGauge"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <Ellipse x:Name="TrackEllipse" Width="80" Height="80"
+                 Stroke="{StaticResource Panel2}" StrokeThickness="10"/>
+        <Path x:Name="ProgressPath" Width="80" Height="80"
+              StrokeThickness="10" Fill="Transparent"/>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock x:Name="ValueText" FontFamily="Cascadia Mono, Consolas"
+                       FontSize="22" FontWeight="Bold" HorizontalAlignment="Center"
+                       Foreground="{StaticResource Txt}"/>
+            <TextBlock x:Name="UnitText" FontSize="10" HorizontalAlignment="Center"
+                       Foreground="{StaticResource Txt3}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

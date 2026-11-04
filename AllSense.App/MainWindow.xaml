@@ -1,0 +1,785 @@
+﻿<Window x:Class="AllSense.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:AllSense.App"
+        Title="AllSense Control"
+        Width="1180" Height="780" MinWidth="1020" MinHeight="660"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource Bg}"
+        FontFamily="Segoe UI" Foreground="{StaticResource Txt}">
+
+    <Grid>
+
+        <!-- glow latar -->
+        <Rectangle Fill="{StaticResource RedGlow}" IsHitTestVisible="False"/>
+        <Rectangle Fill="{StaticResource CyanGlow}" IsHitTestVisible="False"/>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="236"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ============ RAIL / SIDEBAR ============ -->
+            <Border Grid.Column="0" Background="{StaticResource SurfaceGradient}"
+                    BorderBrush="{StaticResource Line}" BorderThickness="0,0,1,0">
+                <DockPanel>
+
+                    <!-- Brand -->
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="18,22,18,18">
+                        <Border Width="34" Height="34" CornerRadius="9"
+                                Background="{StaticResource RedGradient}"
+                                BorderBrush="#33FFFFFF" BorderThickness="1" Margin="0,0,12,0">
+                            <Path Data="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z
+                                      M4.5 12h3l1.5-4 2 8 1.5-6 1 2h4.5"
+                                  Stroke="#2A0008" StrokeThickness="1.8" Stretch="Uniform"
+                                  Margin="7" StrokeLineJoin="Round"/>
+                        </Border>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock FontSize="17" FontWeight="Bold">
+                                <Run Text="ALL"/><Run Text="SENSE" Foreground="{StaticResource Red}"/>
+                            </TextBlock>
+                            <TextBlock FontSize="9.5" Foreground="{StaticResource Txt3}"
+                                       Text="CONTROL · CONSOLE"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Nav -->
+                    <ListBox x:Name="NavList" DockPanel.Dock="Top"
+                             Background="Transparent" BorderThickness="0"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             Padding="10,10,10,14" SelectionChanged="Nav_SelectionChanged"
+                             KeyboardNavigation.DirectionalNavigation="Contained">
+
+                        <ListBoxItem Style="{StaticResource NavGroup}" Content="UTAMA"/>
+
+                        <ListBoxItem Style="{StaticResource NavItem}" Tag="dashboard">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"
+                                      Stroke="{StaticResource Txt3}" StrokeThickness="1.7" Stretch="Uniform"
+                                      Width="18" Height="18" Margin="0,0,12,0" StrokeLineJoin="Round"/>
+                                <TextBlock Text="Dashboard" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+
+                        <ListBoxItem Style="{StaticResource NavItem}" Tag="power">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="M12 3v9M6.5 6.5a8 8 0 1 0 11 0"
+                                      Stroke="{StaticResource Txt3}" StrokeThickness="1.7" Stretch="Uniform"
+                                      Width="18" Height="18" Margin="0,0,12,0" StrokeLineJoin="Round"/>
+                                <TextBlock Text="Power Center" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+
+                        <ListBoxItem Style="{StaticResource NavItem}" Tag="cooling">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="M12 2v20M17.5 5.5l-5.5 5-5.5-5M17.5 18.5l-5.5-5-5.5 5M2.5 8.5l19 7M2.5 15.5l19-7"
+                                      Stroke="{StaticResource Txt3}" StrokeThickness="1.7" Stretch="Uniform"
+                                      Width="18" Height="18" Margin="0,0,12,0" StrokeLineJoin="Round"/>
+                                <TextBlock Text="Cooling" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+
+                        <ListBoxItem Style="{StaticResource NavItem}" Tag="battery">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="M2 7h17v10H2z M22 10v4M6 10v4M9.5 10v4M13 10v4"
+                                      Stroke="{StaticResource Txt3}" StrokeThickness="1.7" Stretch="Uniform"
+                                      Width="18" Height="18" Margin="0,0,12,0" StrokeLineJoin="Round"/>
+                                <TextBlock Text="Battery" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+
+                        <ListBoxItem Style="{StaticResource NavGroup}" Content="SISTEM"/>
+
+                        <ListBoxItem Style="{StaticResource NavItem}" Tag="mylaptop">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="M4 4h16v12H4z M2 20h20M12 16v4"
+                                      Stroke="{StaticResource Txt3}" StrokeThickness="1.7" Stretch="Uniform"
+                                      Width="18" Height="18" Margin="0,0,12,0" StrokeLineJoin="Round"/>
+                                <TextBlock Text="My Laptop" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+
+                        <ListBoxItem Style="{StaticResource NavItem}" Tag="storage">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="M5 4h14v16H5z M5 12h14 M9 8h.01 M9 16h.01"
+                                      Stroke="{StaticResource Txt3}" StrokeThickness="1.7" Stretch="Uniform"
+                                      Width="18" Height="18" Margin="0,0,12,0" StrokeLineJoin="Round"/>
+                                <TextBlock Text="Storage" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+
+                        <ListBoxItem Style="{StaticResource NavItem}" Tag="gaming">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="M7 10c-2.8 0-5 1.4-5 4s2.2 4 5 4c1.4 0 2.4-.5 3.8-1.8.8-.8 1-1.2 1.2-1.2s.4.4 1.2 1.2C14.6 17.5 15.6 18 17 18c2.8 0 5-1.4 5-4s-2.2-4-5-4z M7.5 13v3M6 14.5h3"
+                                      Stroke="{StaticResource Txt3}" StrokeThickness="1.7" Stretch="Uniform"
+                                      Width="18" Height="18" Margin="0,0,12,0" StrokeLineJoin="Round"/>
+                                <TextBlock Text="Gaming Hub" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+
+                        <ListBoxItem Style="{StaticResource NavGroup}" Content="LAINNYA"/>
+
+                        <ListBoxItem Style="{StaticResource NavItem}" Tag="settings">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z
+                                          M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"
+                                      Stroke="{StaticResource Txt3}" StrokeThickness="1.7" Stretch="Uniform"
+                                      Width="18" Height="18" Margin="0,0,12,0" StrokeLineJoin="Round"/>
+                                <TextBlock Text="Settings" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+
+                        <ListBoxItem Style="{StaticResource NavItem}" Tag="about">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z M12 11v5M12 8h.01"
+                                      Stroke="{StaticResource Txt3}" StrokeThickness="1.7" Stretch="Uniform"
+                                      Width="18" Height="18" Margin="0,0,12,0" StrokeLineJoin="Round"/>
+                                <TextBlock Text="About" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+                    </ListBox>
+
+                    <!-- footer -->
+                    <Border DockPanel.Dock="Bottom" Margin="18,14" BorderBrush="{StaticResource Line}"
+                            BorderThickness="0,1,0,0" Padding="0,14,0,0">
+                        <StackPanel>
+                            <TextBlock FontSize="10" Foreground="{StaticResource Txt3}" LineHeight="18">
+                                <Run Text="AllSense "/><Run x:Name="VerFoot" Text="v1.2.0" FontWeight="Bold" Foreground="{StaticResource Txt}"/>
+                            </TextBlock>
+                            <TextBlock FontSize="10" Foreground="{StaticResource Red}" FontFamily="Cascadia Mono, Consolas"
+                                       Text="Windows 11 · x64" Margin="0,2,0,4"/>
+                            <StackPanel Orientation="Horizontal">
+                                <Ellipse Width="6" Height="6" Fill="{StaticResource Green}" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                <TextBlock FontSize="10" Foreground="{StaticResource Txt3}" Text="Sistem aktif"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </DockPanel>
+            </Border>
+
+            <!-- ============ MAIN ============ -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- topbar -->
+                <Border Grid.Row="0" Background="{StaticResource Bg}" BorderBrush="{StaticResource Line}"
+                        BorderThickness="0,0,0,1" Padding="28,14">
+                    <DockPanel LastChildFill="False">
+                        <TextBlock x:Name="PgTitle" DockPanel.Dock="Left" FontSize="16"
+                                   FontWeight="Bold" VerticalAlignment="Center">
+                            <Run Text="DASH"/><Run Text="BOARD" Foreground="{StaticResource Red}"/>
+                        </TextBlock>
+                        <TextBlock x:Name="PgCrumb" DockPanel.Dock="Left" Margin="14,0,0,0"
+                                   VerticalAlignment="Center" FontSize="11" Foreground="{StaticResource Txt3}"
+                                   Text="Ringkasan sistem"/>
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                            <Border Style="{StaticResource Chip}" Margin="0,0,10,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <Ellipse Width="6" Height="6" Fill="{StaticResource Green}" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="ChipSensor" FontSize="11.5" Foreground="{StaticResource Txt2}" Text="Sensor aktif"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource Chip}" Margin="0,0,10,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock FontSize="11.5" Foreground="{StaticResource Txt3}" Text="Sumber · "/>
+                                    <TextBlock x:Name="ChipSrc" FontSize="11.5" FontWeight="Bold" FontFamily="Cascadia Mono, Consolas" Text="—"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource Chip}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock FontSize="11.5" Foreground="{StaticResource Txt3}" Text="Jam · "/>
+                                    <TextBlock x:Name="ClockText" FontSize="11.5" FontWeight="Bold" FontFamily="Cascadia Mono, Consolas" Text="--:--:--"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+
+                <!-- content -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel x:Name="ContentRoot" MaxWidth="1280" Margin="28,26,28,60">
+
+                        <!-- ========= PAGE: DASHBOARD ========= -->
+                        <StackPanel x:Name="PageDash" Visibility="Visible">
+
+                            <Border Style="{StaticResource Card}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Red}" Text="PERANGKAT"/>
+                                        <TextBlock x:Name="HeroModel" FontSize="20" FontWeight="Bold" Margin="0,6,0,0"/>
+                                        <TextBlock x:Name="HeroSub" FontSize="12.5" Foreground="{StaticResource Txt2}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                                        <Border Margin="0,14,0,0" CornerRadius="7" Padding="13,6" Background="#0F000000"
+                                                BorderBrush="#66FF2D4D" BorderThickness="1">
+                                            <StackPanel Orientation="Horizontal">
+                                                <Ellipse Width="7" Height="7" Fill="{StaticResource Red}" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                                <TextBlock x:Name="HeroMode" FontSize="12" FontWeight="Bold" Foreground="{StaticResource Red}" Text="Balanced — AC &amp; DC"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+                                    <Viewbox Grid.Column="1" Width="220" Height="120" Stretch="Uniform">
+                                        <Canvas Width="220" Height="120">
+                                            <Rectangle Canvas.Left="30" Canvas.Top="8" Width="160" Height="88" RadiusX="8" RadiusY="8"
+                                                       Fill="#0B1522" Stroke="#2A3D58"/>
+                                            <Rectangle Canvas.Left="34" Canvas.Top="12" Width="152" Height="80" RadiusX="5" RadiusY="5" Fill="#0A111C"/>
+                                            <Ellipse Canvas.Left="135" Canvas.Top="43" Width="30" Height="30" Fill="#24FF2D4D"/>
+                                            <Ellipse Canvas.Left="57" Canvas.Top="45" Width="26" Height="26" Fill="#1FFF2D4D"/>
+                                            <Path Data="M38 68h28l8-22 10 34 8-26 5 14h20" Stroke="#4DD7FF" StrokeThickness="1.6" Opacity="0.8" StrokeLineJoin="Round"/>
+                                            <Path Data="M38 76h36l8-16 10 28 8-20 5 12h15" Stroke="#FF2D4D" StrokeThickness="1.6" Opacity="0.7" StrokeLineJoin="Round"/>
+                                            <Rectangle Canvas.Left="28" Canvas.Top="100" Width="164" Height="13" RadiusX="4" RadiusY="4" Fill="#131D2C" Stroke="#22334C"/>
+                                            <Ellipse Canvas.Left="43.6" Canvas.Top="103.6" Width="4.8" Height="4.8" Fill="#FF5F5F"/>
+                                            <Ellipse Canvas.Left="175.6" Canvas.Top="103.6" Width="4.8" Height="4.8" Fill="#3BD29A"/>
+                                            <Ellipse Canvas.Left="63" Canvas.Top="19" Width="6" Height="6" Fill="#45C8F0" Opacity="0.9"/>
+                                            <Ellipse Canvas.Left="60" Canvas.Top="16" Width="12" Height="12" Stroke="#45C8F0" Opacity="0.3"/>
+                                            <Ellipse Canvas.Left="179.6" Canvas.Top="27.6" Width="4.8" Height="4.8" Fill="#FF2D4D" Opacity="0.9"/>
+                                        </Canvas>
+                                    </Viewbox>
+                                </Grid>
+                            </Border>
+
+                            <Grid Margin="0,26,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource SectionLabel}" Text="PEMANTAUAN" VerticalAlignment="Center"/>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Ellipse Width="6" Height="6" Fill="{StaticResource Green}" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                    <TextBlock FontSize="11" Foreground="{StaticResource Txt3}" Text="LIVE · "/>
+                                    <TextBlock x:Name="LiveIv" FontSize="11" Foreground="{StaticResource Red}" FontFamily="Cascadia Mono, Consolas" Text="2 DTK"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <Grid Margin="0,12,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+
+                                <!-- Mainboard tile -->
+                                <Border Grid.Column="0" Style="{StaticResource Card}" Margin="0,0,9,0">
+                                    <StackPanel>
+                                        <Grid><TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Red}" Text="SISTEM"/>
+                                              <Border HorizontalAlignment="Right" CornerRadius="5" Padding="7,2" BorderBrush="{StaticResource Line}" BorderThickness="1"><TextBlock FontSize="9" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Txt3}" Text="SUHU SISTEM"/></Border></Grid>
+                                        <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+                                            <local:RingGauge x:Name="GaugeCpu" Width="80" Height="80" Value="0" Accent="{StaticResource Red}"/>
+                                            <StackPanel Margin="14,0,0,0" VerticalAlignment="Center">
+                                                <TextBlock x:Name="TileCpuName" FontSize="13.5" FontWeight="Bold"/>
+                                                <TextBlock x:Name="TileCpuSub" FontSize="11" Foreground="{StaticResource Txt3}" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <ProgressBar x:Name="BarCpu" Margin="0,14,0,0" Foreground="{StaticResource Red}" Value="0"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- GPU tile -->
+                                <Border Grid.Column="1" Style="{StaticResource Card}" Margin="9,0,9,0">
+                                    <StackPanel>
+                                        <Grid><TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Blueprint}" Text="GPU"/>
+                                              <Border HorizontalAlignment="Right" CornerRadius="5" Padding="7,2" BorderBrush="{StaticResource Line}" BorderThickness="1"><TextBlock FontSize="9" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Txt3}" Text="CORE TEMP"/></Border></Grid>
+                                        <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+                                            <local:RingGauge x:Name="GaugeGpu" Width="80" Height="80" Value="0" Accent="{StaticResource Blueprint}"/>
+                                            <StackPanel Margin="14,0,0,0" VerticalAlignment="Center">
+                                                <TextBlock x:Name="TileGpuName" FontSize="13.5" FontWeight="Bold"/>
+                                                <TextBlock x:Name="TileGpuSub" FontSize="11" Foreground="{StaticResource Txt3}" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <ProgressBar x:Name="BarGpu" Margin="0,14,0,0" Foreground="{StaticResource Blueprint}" Value="0"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- RAM tile -->
+                                <Border Grid.Column="2" Style="{StaticResource Card}" Margin="9,0,9,0">
+                                    <StackPanel>
+                                        <Grid><TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Green}" Text="RAM"/>
+                                              <Border HorizontalAlignment="Right" CornerRadius="5" Padding="7,2" BorderBrush="{StaticResource Line}" BorderThickness="1"><TextBlock FontSize="9" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Txt3}" Text="MEMORI"/></Border></Grid>
+                                        <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+                                            <local:RingGauge x:Name="GaugeRam" Width="80" Height="80" Value="0" Accent="{StaticResource Green}"/>
+                                            <StackPanel Margin="14,0,0,0" VerticalAlignment="Center">
+                                                <TextBlock FontSize="13.5" FontWeight="Bold" Text="RAM"/>
+                                                <TextBlock x:Name="TileRamSub" FontSize="11" Foreground="{StaticResource Txt3}" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <ProgressBar x:Name="BarRam" Margin="0,14,0,0" Foreground="{StaticResource Green}" Value="0"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Battery tile -->
+                                <Border Grid.Column="3" Style="{StaticResource Card}" Margin="9,0,0,0">
+                                    <StackPanel>
+                                        <Grid><TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Red}" Text="BATERAI"/>
+                                              <Border HorizontalAlignment="Right" CornerRadius="5" Padding="7,2" BorderBrush="{StaticResource Line}" BorderThickness="1"><TextBlock FontSize="9" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Txt3}" Text="DAYA"/></Border></Grid>
+                                        <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+                                            <local:RingGauge x:Name="GaugeBat" Width="80" Height="80" Value="0" Accent="{StaticResource Red}"/>
+                                            <StackPanel Margin="14,0,0,0" VerticalAlignment="Center">
+                                                <TextBlock FontSize="13.5" FontWeight="Bold" Text="Baterai"/>
+                                                <TextBlock x:Name="TileBatSub" FontSize="11" Foreground="{StaticResource Txt3}" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <ProgressBar x:Name="BarBat" Margin="0,14,0,0" Foreground="{StaticResource Red}" Value="0"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+
+                            <!-- Power section -->
+                            <Grid Margin="0,26,0,0">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource SectionLabel}" Text="POWER MODE" VerticalAlignment="Center"/>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <TextBlock FontSize="11" Foreground="{StaticResource Txt3}" Text="Satu klik · AC &amp; DC"/>
+                                </StackPanel>
+                            </Grid>
+                            <Border Style="{StaticResource Card}" Margin="0,12,0,0">
+                                <StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Button x:Name="SegEff" Grid.Column="0" Style="{StaticResource SegBtn}" Tag="eff" Click="Seg_Click" Margin="0,0,6,0">
+                                            <Grid>
+                                                <Border HorizontalAlignment="Right" VerticalAlignment="Top" CornerRadius="4" Padding="6,2" BorderBrush="{StaticResource Line}" BorderThickness="1">
+                                                    <TextBlock x:Name="SegEffBadge" FontSize="8.5" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Txt3}" Text="HEMAT"/>
+                                                </Border>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Border Width="38" Height="38" CornerRadius="9" Background="{StaticResource Panel3}" Margin="0,0,12,0">
+                                                        <Path Data="M4 20C4 10 10 4 20 4c0 10-6 16-16 16z M4 20c4-4 8-7 12-10"
+                                                              Stroke="{StaticResource Txt2}" StrokeThickness="1.7" Stretch="Uniform" Margin="9" StrokeLineJoin="Round"/>
+                                                    </Border>
+                                                    <StackPanel VerticalAlignment="Center">
+                                                        <TextBlock FontSize="14" FontWeight="Bold" Text="Efisiensi"/>
+                                                        <TextBlock FontSize="10.5" Foreground="{StaticResource Txt3}" Text="Best Power Efficiency"/>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Button>
+                                        <Button x:Name="SegBal" Grid.Column="1" Style="{StaticResource SegBtn}" Tag="bal" Click="Seg_Click" Margin="6,0,6,0">
+                                            <Grid>
+                                                <Border HorizontalAlignment="Right" VerticalAlignment="Top" CornerRadius="4" Padding="6,2" BorderBrush="{StaticResource Line}" BorderThickness="1">
+                                                    <TextBlock x:Name="SegBalBadge" FontSize="8.5" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Txt3}" Text="—"/>
+                                                </Border>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Border Width="38" Height="38" CornerRadius="9" Background="{StaticResource Panel3}" Margin="0,0,12,0">
+                                                        <Path Data="M12 3v18M5 21h14M7 6l5-3 5 3M7 6l-3 7a3 3 0 0 0 6 0zM17 6l-3 7a3 3 0 0 0 6 0z"
+                                                              Stroke="{StaticResource Txt2}" StrokeThickness="1.7" Stretch="Uniform" Margin="9" StrokeLineJoin="Round"/>
+                                                    </Border>
+                                                    <StackPanel VerticalAlignment="Center">
+                                                        <TextBlock FontSize="14" FontWeight="Bold" Text="Balanced"/>
+                                                        <TextBlock FontSize="10.5" Foreground="{StaticResource Txt3}" Text="Seimbang · default"/>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Button>
+                                        <Button x:Name="SegPerf" Grid.Column="2" Style="{StaticResource SegBtn}" Tag="perf" Click="Seg_Click" Margin="6,0,0,0">
+                                            <Grid>
+                                                <Border HorizontalAlignment="Right" VerticalAlignment="Top" CornerRadius="4" Padding="6,2" BorderBrush="{StaticResource Line}" BorderThickness="1">
+                                                    <TextBlock x:Name="SegPerfBadge" FontSize="8.5" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Txt3}" Text="MAKS"/>
+                                                </Border>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Border Width="38" Height="38" CornerRadius="9" Background="{StaticResource Panel3}" Margin="0,0,12,0">
+                                                        <Path Data="M13 2 4 14h6l-1 8 9-12h-6z"
+                                                              Stroke="{StaticResource Txt2}" StrokeThickness="1.7" Stretch="Uniform" Margin="9" StrokeLineJoin="Round"/>
+                                                    </Border>
+                                                    <StackPanel VerticalAlignment="Center">
+                                                        <TextBlock FontSize="14" FontWeight="Bold" Text="Performa"/>
+                                                        <TextBlock FontSize="10.5" Foreground="{StaticResource Txt3}" Text="Best Performance"/>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Button>
+                                    </Grid>
+                                    <Border Margin="0,12,0,0" CornerRadius="11" Background="{StaticResource Panel2}" BorderBrush="{StaticResource Line}" BorderThickness="1" Padding="15,13">
+                                        <DockPanel LastChildFill="False">
+                                            <CheckBox x:Name="LinkACDC" DockPanel.Dock="Left" IsChecked="False" VerticalAlignment="Center" Checked="Link_Changed" Unchecked="Link_Changed"/>
+                                            <TextBlock DockPanel.Dock="Left" Margin="12,0,0,0" VerticalAlignment="Center" FontSize="12.5" Foreground="{StaticResource Txt2}" Text="Gunakan mode yang sama untuk AC &amp; DC"/>
+                                            <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                <Run x:Name="LinkState" FontSize="11.5" FontFamily="Cascadia Mono, Consolas" FontWeight="Bold" Foreground="{StaticResource Red}" Text="TERKUNCI"/>
+                                                <Run FontSize="10.5" Foreground="{StaticResource Txt3}" Text=" · satu klik · dua-duanya"/>
+                                            </TextBlock>
+                                        </DockPanel>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Quick actions -->
+                            <TextBlock Style="{StaticResource SectionLabel}" Text="AKSI CEPAT" Margin="0,26,0,0"/>
+                            <UniformGrid Columns="4" Margin="0,12,0,0">
+                                <Button Style="{StaticResource FlatBtn}" Tag="display" Click="Action_Click" Margin="0,0,8,8" Content="Display"/>
+                                <Button Style="{StaticResource FlatBtn}" Tag="sound" Click="Action_Click" Margin="8,0,8,8" Content="Sound"/>
+                                <Button Style="{StaticResource FlatBtn}" Tag="network" Click="Action_Click" Margin="8,0,8,8" Content="Network"/>
+                                <Button Style="{StaticResource FlatBtn}" Tag="power" Click="Action_Click" Margin="8,0,0,8" Content="Power"/>
+                                <Button Style="{StaticResource FlatBtn}" Tag="storage" Click="Action_Click" Margin="0,0,8,8" Content="Storage"/>
+                                <Button Style="{StaticResource FlatBtn}" Tag="taskmgr" Click="Action_Click" Margin="8,0,8,8" Content="Task Manager"/>
+                                <Button Style="{StaticResource FlatBtn}" Tag="settings" Click="Action_Click" Margin="8,0,8,8" Content="Settings"/>
+                            </UniformGrid>
+                        </StackPanel>
+
+                        <!-- ========= PAGE: POWER ========= -->
+                        <StackPanel x:Name="PagePower" Visibility="Collapsed" Margin="0,0,0,60">
+                            <Border Style="{StaticResource Card}" Padding="24">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Red}" Text="MODE DAYA"/>
+                                    <TextBlock FontSize="20" FontWeight="Bold" Margin="0,8,0,3" Text="Pilih gaya performa"/>
+                                    <TextBlock FontSize="13" Foreground="{StaticResource Txt2}" Text="Satu klik — diterapkan ke AC (colokan) &amp; DC (baterai)."/>
+                                    <Grid Margin="0,18,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Button Grid.Column="0" Style="{StaticResource SegBtn}" Tag="eff" Click="Seg_Click" Margin="0,0,6,0">
+                                            <StackPanel><TextBlock FontSize="14" FontWeight="Bold" Text="Efisiensi"/>
+                                                <TextBlock FontSize="10.5" Foreground="{StaticResource Txt3}" Text="Best Power Efficiency"/></StackPanel>
+                                        </Button>
+                                        <Button Grid.Column="1" Style="{StaticResource SegBtn}" Tag="bal" Click="Seg_Click" Margin="6,0,6,0">
+                                            <StackPanel><TextBlock FontSize="14" FontWeight="Bold" Text="Balanced"/>
+                                                <TextBlock FontSize="10.5" Foreground="{StaticResource Txt3}" Text="Seimbang · default"/></StackPanel>
+                                        </Button>
+                                        <Button Grid.Column="2" Style="{StaticResource SegBtn}" Tag="perf" Click="Seg_Click" Margin="6,0,0,0">
+                                            <StackPanel><TextBlock FontSize="14" FontWeight="Bold" Text="Performa"/>
+                                                <TextBlock FontSize="10.5" Foreground="{StaticResource Txt3}" Text="Best Performance"/></StackPanel>
+                                        </Button>
+                                    </Grid>
+                                    <Border Margin="0,12,0,0" CornerRadius="11" Background="{StaticResource Panel2}" BorderBrush="{StaticResource Line}" BorderThickness="1" Padding="15,13">
+                                        <DockPanel LastChildFill="False">
+                                            <CheckBox DockPanel.Dock="Left" IsChecked="{Binding IsChecked, ElementName=LinkACDC, Mode=OneWay}" IsEnabled="False" VerticalAlignment="Center"/>
+                                            <TextBlock DockPanel.Dock="Left" Margin="12,0,0,0" VerticalAlignment="Center" FontSize="12.5" Foreground="{StaticResource Txt2}" Text="Gunakan mode yang sama untuk AC &amp; DC"/>
+                                            <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                <Run FontSize="11.5" FontFamily="Cascadia Mono, Consolas" FontWeight="Bold" Foreground="{StaticResource Red}" Text="{Binding Text, ElementName=LinkState}"/>
+                                            </TextBlock>
+                                        </DockPanel>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+
+                            <Grid Margin="0,18,0,0">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource Card}" Margin="0,0,9,0">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Red}" Text="APA YANG BERUBAH"/>
+                                        <TextBlock x:Name="PowerInfo" FontSize="13" Foreground="{StaticResource Txt2}" LineHeight="22" Margin="0,10,0,0" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="1" Style="{StaticResource Card}" Margin="9,0,0,0">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Green}" Text="STATUS TERSIMPAN"/>
+                                        <StackPanel Margin="0,6,0,0">
+                                            <Grid Margin="0,10,0,0"><TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Power Mode"/><TextBlock x:Name="PwMode" HorizontalAlignment="Right" FontSize="12" FontFamily="Cascadia Mono, Consolas" Text="—"/></Grid>
+                                            <Grid Margin="0,10,0,0"><TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="AC (colokan)"/><TextBlock x:Name="PwAc" HorizontalAlignment="Right" FontSize="12" Foreground="{StaticResource Red}" FontWeight="Bold" Text="—"/></Grid>
+                                            <Grid Margin="0,10,0,0"><TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="DC (baterai)"/><TextBlock x:Name="PwDc" HorizontalAlignment="Right" FontSize="12" Foreground="{StaticResource Red}" FontWeight="Bold" Text="—"/></Grid>
+                                            <Grid Margin="0,10,0,0"><TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Link AC/DC"/><TextBlock x:Name="PwLink" HorizontalAlignment="Right" FontSize="12" FontFamily="Cascadia Mono, Consolas" Text="—"/></Grid>
+                                            <Grid Margin="0,10,0,0"><TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="API PowrProf"/><TextBlock x:Name="PwMth" HorizontalAlignment="Right" FontSize="12" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Green}" Text="—"/></Grid>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+
+                        <!-- ========= PAGE: COOLING ========= -->
+                        <StackPanel x:Name="PageCool" Visibility="Collapsed" Margin="0,0,0,60">
+                            <UniformGrid Columns="2">
+                                <Border Style="{StaticResource Card}" Margin="0,0,9,0">
+                                    <StackPanel>
+                                        <Grid><TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Red}" Text="SUHU SISTEM"/>
+                                              <Border HorizontalAlignment="Right" CornerRadius="5" Padding="7,2" BorderBrush="{StaticResource Line}" BorderThickness="1"><TextBlock FontSize="9" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Txt3}" Text="ACPI"/></Border></Grid>
+                                        <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+                                            <local:RingGauge x:Name="CoolCpu" Width="92" Height="92" Value="0" Accent="{StaticResource Red}" Unit="°C"/>
+                                            <StackPanel Margin="14,0,0,0" VerticalAlignment="Center">
+                                                <TextBlock x:Name="CoolCpuName" FontSize="13.5" FontWeight="Bold"/>
+                                                <TextBlock x:Name="CoolCpuSub" FontSize="11" Foreground="{StaticResource Txt3}" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <ProgressBar x:Name="CoolBarCpu" Margin="0,14,0,0" Foreground="{StaticResource Red}" Value="0"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource Card}" Margin="9,0,0,0">
+                                    <StackPanel>
+                                        <Grid><TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Blueprint}" Text="SUHU GPU"/>
+                                              <Border HorizontalAlignment="Right" CornerRadius="5" Padding="7,2" BorderBrush="{StaticResource Line}" BorderThickness="1"><TextBlock FontSize="9" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Txt3}" Text="ZONA"/></Border></Grid>
+                                        <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+                                            <local:RingGauge x:Name="CoolGpu" Width="92" Height="92" Value="0" Accent="{StaticResource Blueprint}" Unit="°C"/>
+                                            <StackPanel Margin="14,0,0,0" VerticalAlignment="Center">
+                                                <TextBlock x:Name="CoolGpuName" FontSize="13.5" FontWeight="Bold"/>
+                                                <TextBlock x:Name="CoolGpuSub" FontSize="11" Foreground="{StaticResource Txt3}" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <ProgressBar x:Name="CoolBarGpu" Margin="0,14,0,0" Foreground="{StaticResource Blueprint}" Value="0"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource Card}" Margin="0,9,9,0">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Red}" Text="KIPAS"/>
+                                        <TextBlock x:Name="FanRpm" FontSize="34" FontWeight="Bold" FontFamily="Cascadia Mono, Consolas" Margin="0,12,0,0" Text="—"/>
+                                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                            <TextBlock FontSize="12" Foreground="{StaticResource Txt3}" Text="Mode: otomatis · "/>
+                                            <TextBlock FontSize="12" FontWeight="Bold" Foreground="{StaticResource Red}" Text="Dynamic"/>
+                                        </StackPanel>
+                                        <Button Style="{StaticResource FlatBtn}" Tag="power" Click="Action_Click" Margin="0,18,0,0" Content="Buka power settings"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource Card}" Margin="9,9,0,0">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Blueprint}" Text="PROFIL PENDINGINAN"/>
+                                        <StackPanel Margin="0,6,0,0">
+                                            <Grid Margin="0,10,0,0">
+                                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                                <TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Sumber sensor suhu" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Grid.Column="1" x:Name="CoolSrc" Margin="12,0,0,0" FontSize="12" FontFamily="Cascadia Mono, Consolas" Text="Thermal Zone"/>
+                                            </Grid>
+                                            <Grid Margin="0,10,0,0">
+                                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                                <TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Status sensor"/>
+                                                <TextBlock Grid.Column="1" x:Name="CoolStatus" Margin="12,0,0,0" FontSize="12" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Green}" Text="—"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </UniformGrid>
+
+                            <TextBlock Style="{StaticResource SectionLabel}" Text="TREN SUHU" Margin="0,26,0,0"/>
+                            <Border Style="{StaticResource Card}" Margin="0,12,0,0">
+                                <StackPanel>
+                                    <Grid><TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Mainboard"/>
+                                          <TextBlock x:Name="TrCpu" HorizontalAlignment="Right" FontSize="12" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Blueprint}" Text="—"/></Grid>
+                                    <ProgressBar x:Name="TrCpuBar" Margin="0,8,0,0" Height="10" Foreground="{StaticResource Red}" Value="0"/>
+                                    <Grid Margin="0,16,0,0"><TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="GPU"/>
+                                          <TextBlock x:Name="TrGpu" HorizontalAlignment="Right" FontSize="12" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Blueprint}" Text="—"/></Grid>
+                                    <ProgressBar x:Name="TrGpuBar" Margin="0,8,0,0" Height="10" Foreground="{StaticResource Blueprint}" Value="0"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- ========= PAGE: BATTERY ========= -->
+                        <StackPanel x:Name="PageBat" Visibility="Collapsed" Margin="0,0,0,60">
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource Card}" Margin="0,0,9,0" Padding="24">
+                                    <StackPanel Orientation="Horizontal">
+                                        <local:RingGauge x:Name="BatBig" Width="150" Height="150" Value="0" Accent="{StaticResource Red}" Unit="persen"/>
+                                        <StackPanel Margin="24,0,0,0" VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Green}" Text="DAYA TERSISA"/>
+                                            <TextBlock x:Name="BatState" FontSize="16" FontWeight="Bold" Foreground="{StaticResource Green}" Margin="0,9,0,0" Text="—"/>
+                                            <TextBlock x:Name="BatSub" FontSize="12.5" Foreground="{StaticResource Txt3}" Margin="0,5,0,0" Text="Sumber: —"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="1" Style="{StaticResource Card}" Margin="9,0,0,0">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Blueprint}" Text="STATUS BATERAI"/>
+                                        <StackPanel Margin="0,6,0,0">
+                                            <Grid Margin="0,10,0,0"><TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Status"/><TextBlock x:Name="BStatus" HorizontalAlignment="Right" FontSize="12" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Green}" Text="—"/></Grid>
+                                            <Grid Margin="0,10,0,0"><TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Estimasi tersisa"/><TextBlock x:Name="BLife" HorizontalAlignment="Right" FontSize="12" FontFamily="Cascadia Mono, Consolas" Text="—"/></Grid>
+                                            <Grid Margin="0,10,0,0"><TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Sumber daya"/><TextBlock x:Name="BSrc" HorizontalAlignment="Right" FontSize="12" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Red}" Text="—"/></Grid>
+                                            <Grid Margin="0,10,0,0"><TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Suhu Mainboard"/><TextBlock x:Name="BTemp" HorizontalAlignment="Right" FontSize="12" FontFamily="Cascadia Mono, Consolas" Text="—"/></Grid>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                            <StackPanel Orientation="Horizontal" Margin="0,18,0,0">
+                                <Button Style="{StaticResource FlatBtn}" Tag="power" Click="Action_Click" Content="Buka pengaturan daya"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- ========= PAGE: MY LAPTOP ========= -->
+                        <StackPanel x:Name="PageLaptop" Visibility="Collapsed" Margin="0,0,0,60">
+                            <Border Style="{StaticResource Card}">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Red}" Text="PERANGKAT"/>
+                                    <TextBlock x:Name="LapModel" FontSize="20" FontWeight="Bold" Margin="0,6,0,0"/>
+                                    <TextBlock x:Name="LapOs" FontSize="12.5" Foreground="{StaticResource Txt3}" Margin="0,4,0,0"/>
+                                </StackPanel>
+                            </Border>
+                            <Grid Margin="0,18,0,0">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource Card}" Margin="0,0,9,0">
+                                    <StackPanel><TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Blueprint}" Text="PROSESOR"/>
+                                        <TextBlock x:Name="LapCpu" FontSize="12.5" Foreground="{StaticResource Txt2}" TextWrapping="Wrap" Margin="0,6,0,0"/></StackPanel>
+                                </Border>
+                                <Border Grid.Column="1" Style="{StaticResource Card}" Margin="9,0,0,0">
+                                    <StackPanel><TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Blueprint}" Text="GRAFIS"/>
+                                        <TextBlock x:Name="LapGpu" FontSize="12.5" Foreground="{StaticResource Txt2}" TextWrapping="Wrap" Margin="0,6,0,0"/></StackPanel>
+                                </Border>
+                            </Grid>
+                            <Grid Margin="0,18,0,0">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource Card}" Margin="0,0,9,0">
+                                    <StackPanel><TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Green}" Text="MEMORI"/>
+                                        <TextBlock x:Name="LapRam" FontSize="12.5" Foreground="{StaticResource Txt2}" Margin="0,6,0,0"/></StackPanel>
+                                </Border>
+                                <Border Grid.Column="1" Style="{StaticResource Card}" Margin="9,0,0,0">
+                                    <StackPanel><TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Red}" Text="SISTEM"/>
+                                        <Grid Margin="0,10,0,0"><TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="OS"/><TextBlock x:Name="LapOsRow" HorizontalAlignment="Right" FontSize="12" Text="—"/></Grid>
+                                        <Grid Margin="0,10,0,0"><TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Arsitektur"/><TextBlock HorizontalAlignment="Right" FontSize="12" FontFamily="Cascadia Mono, Consolas" Text="x64"/></Grid>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+
+                        <!-- ========= PAGE: STORAGE ========= -->
+                        <StackPanel x:Name="PageStore" Visibility="Collapsed" Margin="0,0,0,60">
+                            <TextBlock x:Name="StoreEmpty" Style="{StaticResource CardLabel}" Foreground="{StaticResource Txt3}" FontSize="13" Visibility="Collapsed"
+                                       Text="Tidak ada drive terbaca" Margin="0,0,0,14"/>
+                            <ItemsControl x:Name="StoreList"/>
+                        </StackPanel>
+
+                        <!-- ========= PAGE: GAMING ========= -->
+                        <StackPanel x:Name="PageGame" Visibility="Collapsed" Margin="0,0,0,60">
+                            <Border Style="{StaticResource Card}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock FontSize="15" FontWeight="Bold" Text="Boost cepat"/>
+                                        <TextBlock x:Name="GameMode" FontSize="12.5" Foreground="{StaticResource Txt3}" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="1" Style="{StaticResource FlatBtn}" Tag="perf" Click="Seg_Click" Content="Set Performa"/>
+                                </Grid>
+                            </Border>
+                            <Grid Margin="0,18,0,0">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource Card}" Margin="0,0,9,0">
+                                    <StackPanel><TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Red}" Text="STATUS"/>
+                                        <Grid Margin="0,10,0,0"><TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Power Mode"/><TextBlock x:Name="GameModeRow" HorizontalAlignment="Right" FontSize="12" Foreground="{StaticResource Red}" FontWeight="Bold" Text="—"/></Grid>
+                                        <Grid Margin="0,10,0,0"><TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Layar"/><TextBlock HorizontalAlignment="Right" FontSize="12" FontFamily="Cascadia Mono, Consolas" Text="Auto"/></Grid>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="1" Style="{StaticResource Card}" Margin="9,0,0,0">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Blueprint}" Text="FITUR KHUSUS"/>
+                                        <Border Margin="0,12,0,0" BorderBrush="{StaticResource Line2}" BorderThickness="1" CornerRadius="9" Padding="24">
+                                            <StackPanel>
+                                                <TextBlock FontSize="13.5" FontWeight="Bold" Text="Kunci perangkat"/>
+                                                <TextBlock FontSize="12" Foreground="{StaticResource Txt3}" TextWrapping="Wrap" Margin="0,4,0,0"
+                                                           Text="RGB, MUX &amp; overclock butuh adapter vendor. Versi universal hanya power + monitoring."/>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+
+                        <!-- ========= PAGE: SETTINGS ========= -->
+                        <StackPanel x:Name="PageSet" Visibility="Collapsed" Margin="0,0,0,60">
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource Card}" Margin="0,0,9,0">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Red}" Text="UMUM"/>
+                                        <Grid Margin="0,12,0,0"><TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Mulai bersama Windows"/>
+                                            <CheckBox x:Name="SetSW" HorizontalAlignment="Right" Checked="SetSW_Changed" Unchecked="SetSW_Changed"/></Grid>
+                                        <Grid Margin="0,12,0,0"><TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Minimalkan ke tray"/>
+                                            <CheckBox x:Name="SetTray" HorizontalAlignment="Right" Checked="SetTray_Changed" Unchecked="SetTray_Changed"/></Grid>
+                                        <Grid Margin="0,12,0,0">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                            <TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Shortcut global panggil AllSense" VerticalAlignment="Center"/>
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                <TextBox x:Name="HkBox" Width="170" Height="30" IsReadOnly="True"
+                                                         PreviewKeyDown="HkBox_PreviewKeyDown"
+                                                         ToolTip="Klik, lalu tekan kombinasi tombol. Minimal satu modifier (Ctrl/Alt/Shift/Win)."/>
+                                                <Button Content="Reset" Margin="8,0,0,0" Style="{StaticResource FlatBtn}"
+                                                        Padding="14,4" Click="HkReset_Click"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="1" Style="{StaticResource Card}" Margin="9,0,0,0">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Blueprint}" Text="PEMANTAUAN"/>
+                                        <Grid Margin="0,12,0,0"><TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Interval sampling"/>
+                                            <ComboBox x:Name="SetIv" HorizontalAlignment="Right" MinWidth="110" SelectionChanged="SetIv_Changed">
+                                                <ComboBoxItem Content="2 dtk" Tag="2"/><ComboBoxItem Content="5 dtk" Tag="5"/>
+                                            </ComboBox></Grid>
+                                        <Grid Margin="0,12,0,0"><TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Unit suhu"/>
+                                            <TextBlock HorizontalAlignment="Right" FontSize="12" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Red}" Text="°C"/></Grid>
+                                        <Grid Margin="0,12,0,0"><TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Tema"/>
+                                            <TextBlock HorizontalAlignment="Right" FontSize="12" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Red}" Text="Precision Dark"/></Grid>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                            <Border Style="{StaticResource Card}" Margin="0,18,0,0">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Blueprint}" Text="PEMBARUAN"/>
+                                    <Grid Margin="0,12,0,0">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                        <TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Versi terpasang"/>
+                                        <TextBlock Grid.Column="1" x:Name="UpVer" FontSize="12" FontFamily="Cascadia Mono, Consolas"
+                                                   Foreground="{StaticResource Green}" Text="—"/>
+                                    </Grid>
+                                    <Grid Margin="0,12,0,0">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                        <TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Repo GitHub (owner/repo)" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="UpRepo" Grid.Column="1" Margin="12,0,12,0" Height="30"/>
+                                        <Button Grid.Column="2" x:Name="UpCheck" Style="{StaticResource FlatBtn}" Content="Cek update" Click="UpCheck_Click"/>
+                                    </Grid>
+                                    <Grid Margin="0,10,0,0">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                        <TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Token GitHub (opsional)" VerticalAlignment="Center"/>
+                                        <PasswordBox x:Name="UpToken" Grid.Column="1" Margin="12,0,0,0" Height="30"
+                                                    ToolTip="Fine-grained token (opsional). Diperlukan hanya untuk repo privat. Simpan lokal, jangan dibagikan."/>
+                                    </Grid>
+                                    <TextBlock x:Name="UpStatus" FontSize="12" Foreground="{StaticResource Txt3}"
+                                               TextWrapping="Wrap" Margin="0,10,0,0" Text="Set repo GitHub lalu klik 'Cek update'."/>
+                                    <Button x:Name="UpBtn" Style="{StaticResource FlatBtn}" Margin="0,4,0,0"
+                                            Visibility="Collapsed" HorizontalAlignment="Left" Click="UpBtn_Click"/>
+                                    <TextBlock FontSize="11" Foreground="{StaticResource Txt3}" TextWrapping="Wrap" Margin="0,10,0,0"
+                                               Text="Update diunduh dari GitHub Releases (asset .zip), lalu exe lama diganti otomatis tanpa instal ulang."/>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource Card}" Margin="0,18,0,0">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Red}" Text="ZONA BERBAHAYA"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+                                        <Button Style="{StaticResource FlatBtn}" Tag="power" Click="Action_Click" Content="Buka pengaturan daya"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- ========= PAGE: ABOUT ========= -->
+                        <StackPanel x:Name="PageAbout" Visibility="Collapsed" Margin="0,0,0,60">
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource Card}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Border Width="62" Height="62" CornerRadius="14" Background="{StaticResource RedGradient}" BorderBrush="#33FFFFFF" BorderThickness="1">
+                                            <Path Data="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z M4.5 12h3l1.5-4 2 8 1.5-6 1 2h4.5"
+                                                  Stroke="#2A0008" StrokeThickness="1.8" Stretch="Uniform" Margin="14" StrokeLineJoin="Round"/>
+                                        </Border>
+                                        <StackPanel Margin="16,0,0,0" VerticalAlignment="Center">
+                                            <TextBlock FontSize="18" FontWeight="Bold" Text="AllSense Control"/>
+                                            <TextBlock x:Name="AboutVer" FontSize="12.5" Foreground="{StaticResource Txt3}" Margin="0,3,0,0" Text="v1.2.0 · Universal laptop control center"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="1" Style="{StaticResource Card}" Margin="9,0,0,0">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Blueprint}" Text="TEKNIS"/>
+                                        <Grid Margin="0,10,0,0"><TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Framework"/><TextBlock HorizontalAlignment="Right" FontSize="12" Text=".NET 8 + WPF"/></Grid>
+                                        <Grid Margin="0,10,0,0"><TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Target OS"/><TextBlock HorizontalAlignment="Right" FontSize="12" Text="Windows 11 x64"/></Grid>
+                                        <Grid Margin="0,10,0,0"><TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Sumber daya"/><TextBlock HorizontalAlignment="Right" FontSize="12" Foreground="{StaticResource Green}" Text="Local-first"/></Grid>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                            <Border Style="{StaticResource Card}" Margin="0,18,0,0">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Green}" Text="PRIVASI"/>
+                                    <TextBlock FontSize="13" Foreground="{StaticResource Txt2}" TextWrapping="Wrap" LineHeight="22" Margin="0,10,0,0"
+                                               Text="Semua data diproses lokal di perangkat. Tanpa telemetri, tanpa cloud, tanpa akun. AllSense hanya membaca status daya dan sensor sistem."/>
+                                </StackPanel>
+                            </Border>
+                            <TextBlock HorizontalAlignment="Center" FontSize="11" Foreground="{StaticResource Txt3}" Margin="0,30,0,0"
+                                       Text="AllSense Control © 2026 — dibangun untuk Windows 11 · Precision Instrument Console"/>
+                        </StackPanel>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

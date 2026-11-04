@@ -1,0 +1,35 @@
+# Build / output
+bin/
+obj/
+dist/
+
+# IDE
+.vs/
+*.user
+*.suo
+
+# Runtime artifacts
+*.pdb
+*.log
+
+# Selftest marker dir (di akar & di app)
+.selftest/
+selftest-result.txt
+
+# Codebase alternatif / lama (bukan sumber aktif)
+AllSenseControl/
+AllSense.Setup/
+
+# Desain / referensi web (tidak dipakai runtime)
+design.html
+AllSense.App/Web/
+AllSense.App/design/
+AllSense.App/ui/
+
+# AllSense app data (lokal, bukan source)
+settings.json
+crash.log
+
+# OS
+Thumbs.db
+Desktop.ini
