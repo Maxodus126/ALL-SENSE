@@ -4,237 +4,221 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>AllSense Control — Pusat Kendali Laptop Windows</title>
-<meta name="description" content="AllSense Control: universal laptop control center untuk Windows. Power mode AC/DC satu klik, suhu live CPU/GPU/RAM, hotkey global, update otomatis. WPF/.NET 8, tanpa admin.">
+<meta name="description" content="AllSense Control: universal laptop control center untuk Windows. Power mode AC/DC satu klik, suhu live sistem/GPU/RAM, hotkey global, update lewat GitHub. WPF/.NET 8, tanpa admin.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Russo+One&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
-   AllSense Control — landing page
-   Tema = tema asli aplikasi (App.xaml): navy gelap #070B12,
-   aksen merah #FF2D4D, blueprint cyan #45C8F0, hijau #34C98F.
-   Konsep: panel instrumen / ruang kendali. Satu tema gelap —
-   konsisten dengan tampilan aplikasi.
+   AllSense Control — landing page, gaya "game launch".
+   Token warna = App.xaml asli: #070B12 bg, #111925 panel,
+   #FF2D4D merah, #45C8F0 cyan, #34C98F hijau.
+   Tanpa gambar tangkapan layar: konsol hero dibangun CSS murni.
    ============================================================ */
 :root{
-  --bg:       #070B12;   /* Bg aplikasi */
-  --bg2:      #0C121C;   /* Surface */
-  --surface:  #0C121C;
-  --surface2: #111925;   /* Panel */
-  --surface3: #172230;   /* Panel2 */
-  --line:     rgba(34,51,74,.6);   /* Line #22334A */
-  --line2:    #2D3A55;             /* Line2 */
-  --fg:       #EAF0F8;             /* Txt */
-  --muted:    #AEBDD3;             /* Txt2 */
-  --dim:      #6F7F9A;             /* Txt3 */
-  --red:      #FF2D4D;             /* Red — aksen utama */
-  --reddeep:  #D40F2E;             /* RedDeep */
-  --cyan:     #45C8F0;             /* Blueprint */
-  --green:    #34C98F;             /* Green */
-  --display: "Chakra Petch", "Segoe UI", system-ui, sans-serif;
-  --body:    "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
-  --mono:    "IBM Plex Mono", "Consolas", monospace;
-  color-scheme: dark;
+  --bg:#070B12;
+  --surface:#0C121C;
+  --panel:#111925;
+  --panel2:#172230;
+  --panel3:#1E2C3D;
+  --line:#22334A;
+  --line2:#2D3A55;
+  --fg:#EAF0F8;
+  --muted:#AEBDD3;
+  --dim:#6F7F9A;
+  --red:#FF2D4D;
+  --reddeep:#D40F2E;
+  --redburn:#9C0A24;
+  --cyan:#45C8F0;
+  --green:#34C98F;
+  --amber:#F0AB3D;
+  --display:"Russo One","Chakra Petch",system-ui,sans-serif;
+  --head:"Chakra Petch","Segoe UI",system-ui,sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono","Consolas",monospace;
+  color-scheme:dark;
 }
-*{box-sizing:border-box; margin:0; padding:0}
+*{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{
   background:var(--bg); color:var(--fg);
   font-family:var(--body); font-size:16px; line-height:1.55;
   -webkit-font-smoothing:antialiased;
-  padding-inline:max(16px, env(safe-area-inset-left,0px)) max(16px, env(safe-area-inset-right,0px));
-  padding-block:0;
   overflow-x:hidden;
 }
-::selection{background:rgba(255,45,77,.3)}
-a{color:inherit; text-decoration:none}
-.wrap{max-width:1100px; margin-inline:auto}
+::selection{background:rgba(255,45,77,.28)}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1100px;margin-inline:auto}
 .pad{padding-block:72px}
 .hairline{border-top:1px solid var(--line)}
-img{max-width:100%; display:block}
+img{max-width:100%;display:block}
 
 /* ---------- latar: glow merah + grid + noise ---------- */
-.bgfx{position:fixed; inset:0; z-index:-1; pointer-events:none;
-  background:
-    radial-gradient(900px 520px at 75% -10%, rgba(255,45,77,.10), transparent 60%),
-    radial-gradient(700px 460px at -8% 30%, rgba(69,200,240,.06), transparent 60%),
-    linear-gradient(180deg, #0F1723 0%, var(--bg) 30%);
-}
-.bgfx::after{content:""; position:absolute; inset:0; opacity:.5;
+.bgfx{position:fixed;inset:0;z-index:-1;pointer-events:none;background:
+  radial-gradient(1100px 720px at 85% -12%,rgba(255,45,77,.12),transparent 58%),
+  radial-gradient(900px 580px at -10% 110%,rgba(69,200,240,.08),transparent 55%),
+  linear-gradient(180deg,#0F1723 0%,var(--bg) 30%);}
+.bgfx::after,
+.bgfx::before{content:"";position:absolute;inset:0;opacity:.5;
   background-image:
-    linear-gradient(var(--line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    linear-gradient(var(--line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--line) 1px,transparent 1px);
   background-size:44px 44px;
-  mask-image:radial-gradient(720px 480px at 50% 0%, #000 30%, transparent 75%);
+  -webkit-mask-image:radial-gradient(720px 480px at 50% 0%,#000 30%,transparent 75%);
+  mask-image:radial-gradient(720px 480px at 50% 0%,#000 30%,transparent 75%);
 }
-.bgfx::before{content:""; position:absolute; inset:0;
-  background-image:radial-gradient(rgba(255,255,255,.028) 1px, transparent 1px);
-  background-size:3px 3px;
-  mix-blend-mode:overlay;
-}
+.bgfx::before{background-image:radial-gradient(rgba(255,255,255,.028) 1px,transparent 1px);
+  background-size:3px 3px;mix-blend-mode:overlay;}
 
 /* ---------- topbar ---------- */
-.topbar{position:sticky; top:0; z-index:50;
-  background:color-mix(in srgb, var(--bg) 82%, transparent);
-  backdrop-filter:blur(10px);
-  border-bottom:1px solid var(--line);}
-.topbar .wrap{display:flex; align-items:center; gap:20px; height:60px}
-.brand{display:flex; align-items:center; gap:10px; font-family:var(--display); font-weight:700; font-size:15px; letter-spacing:.04em}
-.brand .mark{width:26px; height:26px; flex:none; position:relative}
-.brand .mark svg{position:absolute; inset:0}
-.brand .tag{font-family:var(--mono); font-weight:400; font-size:10.5px; color:var(--dim); letter-spacing:.14em; text-transform:uppercase; margin-left:4px}
-.nav{display:flex; gap:4px; margin-left:auto; align-items:center}
-.nav a{font-family:var(--mono); font-size:12px; letter-spacing:.06em; color:var(--muted); padding:7px 11px; border-radius:5px; border:1px solid transparent; transition:color .15s, border-color .15s}
-.nav a:hover{color:var(--fg); border-color:var(--line2)}
-.topbar .cta{font-family:var(--display); font-weight:600; font-size:13px; letter-spacing:.03em}
-.btn{display:inline-flex; align-items:center; gap:8px; cursor:pointer;
-  border:1px solid var(--line2); border-radius:6px;
-  padding:11px 18px; font-family:var(--display); font-weight:600; font-size:14px; letter-spacing:.03em;
-  color:var(--fg); background:var(--surface2); transition:transform .12s, border-color .15s, background .15s}
-.btn:hover{border-color:var(--red); background:var(--surface3)}
-.btn:active{transform:translateY(1px)}
-.btn.primary{background:linear-gradient(180deg, var(--red), var(--reddeep)); border-color:var(--red); color:#fff; box-shadow:0 0 0 1px rgba(255,45,77,.25), 0 6px 24px -8px rgba(255,45,77,.55)}
-.btn.primary:hover{background:linear-gradient(180deg, #ff4461, var(--red))}
-.btn .d{font-family:var(--mono); font-weight:500; font-size:11px; color:inherit; opacity:.7}
+.topnav{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 84%,transparent);
+  backdrop-filter:blur(12px);border-bottom:1px solid var(--line);}
+.topnav .wrap{display:flex;align-items:center;gap:18px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:16px;letter-spacing:.04em}
+.brand .mark{width:26px;height:26px;flex:none;position:relative}
+.brand .mark svg{position:absolute;inset:0}
+.brand .tag{font-family:var(--mono);font-weight:400;font-size:9.5px;color:var(--dim);letter-spacing:.14em;text-transform:uppercase;margin-left:4px}
+.nav{display:flex;gap:4px;margin-left:auto;align-items:center}
+.nav a{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--muted);padding:7px 11px;border-radius:5px;border:1px solid transparent;transition:color .15s,border-color .15s}
+.nav a:hover{color:var(--fg);border-color:var(--line2)}
+.cta-btn{font-family:var(--display);font-weight:600;font-size:14px;letter-spacing:.03em;background:linear-gradient(180deg,var(--red),var(--reddeep));border:none;border-radius:8px;padding:11px 20px;color:#fff;box-shadow:0 0 0 1px rgba(255,45,77,.25),0 8px 24px -10px rgba(255,45,77,.65);cursor:pointer;transition:transform .12s,filter .15s}
+.cta-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.cta-btn:active{transform:translateY(1px)}
 
-/* ---------- hero ---------- */
-.hero{padding-block:64px 56px}
-.hero .wrap{display:grid; grid-template-columns:1.02fr .98fr; gap:44px; align-items:center}
-.eyebrow{display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--red); margin-bottom:18px}
-.eyebrow::before{content:""; width:7px; height:7px; background:var(--red); box-shadow:0 0 0 3px rgba(255,45,77,.2); animation:blink 2.4s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
-.hero h1{font-family:var(--display); font-weight:700; font-size:clamp(38px, 5.2vw, 60px); line-height:1.02; letter-spacing:-.01em; text-wrap:balance}
-.hero h1 .rd{color:var(--red); position:relative; white-space:nowrap}
-.hero h1 .rd::after{content:""; position:absolute; left:0; right:0; bottom:-4px; height:3px; background:linear-gradient(90deg, var(--red), transparent)}
-.sub{color:var(--muted); font-size:17px; max-width:34em; margin-top:20px}
-.heroacts{display:flex; flex-wrap:wrap; gap:12px; margin-top:28px; align-items:center}
-.req{display:flex; flex-wrap:wrap; gap:8px; margin-top:26px}
-.req span{font-family:var(--mono); font-size:11px; letter-spacing:.05em; color:var(--muted); border:1px solid var(--line); border-radius:20px; padding:5px 12px}
+/* ---------- hero (device mockup) ---------- */
+.hero{position:relative;padding-block:96px 0;display:grid;grid-template-columns:1.08fr .92fr;gap:48px;align-items:center}
+.hero-copy .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--red);margin-bottom:18px}
+.hero-copy .eyebrow::before{content:"";width:7px;height:7px;background:var(--red);box-shadow:0 0 0 3px rgba(255,45,77,.18);animation:blink 2.4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}
+.hero-copy h1{font-family:var(--display);font-weight:700;font-size:clamp(46px,5.8vw,72px);line-height:1.05;letter-spacing:-.01em;margin-top:8px}
+.hero-copy .sub{color:var(--muted);font-size:17px;max-width:34em;margin-top:24px;line-height:1.6}
+.hero-facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:32px}
+.hero-fact{font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;color:var(--muted);border:1px solid var(--line);border-radius:20px;padding:6px 14px;background:var(--surface2)}
 
-/* ---------- frame screenshot asli ---------- */
-.shot{border:1px solid var(--line2); border-radius:12px; overflow:hidden;
-  box-shadow:0 30px 70px -30px rgba(0,0,0,.85), 0 0 0 1px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.04), 0 0 60px -20px rgba(255,45,77,.18)}
-.shot .pwin{display:flex; align-items:center; gap:8px; padding:10px 14px; border-bottom:1px solid var(--line); background:var(--surface3)}
-.shot .pwin .dot{width:10px; height:10px; border-radius:50%}
-.shot .pwin .dot:nth-child(1){background:var(--red)}
-.shot .pwin .dot:nth-child(2){background:#f0ab3d}
-.shot .pwin .dot:nth-child(3){background:var(--green)}
-.shot .pwin .ttl{font-family:var(--mono); font-size:11px; color:var(--muted); margin-left:8px; letter-spacing:.04em}
-.shot .pwin .live{margin-left:auto; display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:10px; color:var(--red); letter-spacing:.12em; text-transform:uppercase}
-.shot .pwin .live::before{content:""; width:6px; height:6px; border-radius:50%; background:var(--red); animation:blink 1.6s infinite}
-.shot img{width:100%; display:block}
-.shotcap{font-family:var(--mono); font-size:10.5px; color:var(--dim); letter-spacing:.08em; text-transform:uppercase; margin-top:10px; text-align:center}
+/* Device mockup tanpa screenshot */
+.hero-mock{position:relative;z-index:2;transform:perspective(1200px) rotateY(-6deg) rotateX(2deg);transition:transform .3s cubic-bezier(.2,.7,.2,1);box-shadow:0 40px 80px -30px rgba(0,0,0,.7)}
+.hero-mock:hover{transform:perspective(1200px) rotateY(-2deg) rotateX(1deg)}
+.hero-mock::before{content:"";position:absolute;inset:-20px;border-radius:14px;background:linear-gradient(140deg,var(--red),var(--reddeep));opacity:.35;filter:blur(26px);z-index:-1;animation:pulse 4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.25}50%{opacity:.45}
+.mock-frame{border:1px solid var(--line2);border-radius:12px;overflow:hidden;background:var(--panel);box-shadow:
+  0 20px 40px -16px rgba(0,0,0,.6),
+  0 0 0 1px rgba(0,0,0,.45),
+  inset 0 1px 0 rgba(255,255,255,.04),
+  0 0 40px -12px rgba(255,45,77,.28)}
+.mock-content{padding:24px;display:flex;flex-direction:column;gap:20px}
+.mock-header{display:flex;gap:8px}
+.mock-header .dot{width:10px;height:10px;border-radius:50%}
+.mock-header .dot:nth-child(1){background:#FF2D4D}
+.mock-header .dot:nth-child(2){background:#f0ab3d}
+.mock-header .dot:nth-child(3){background:#34C98F}
+.mock-header .title{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-left:8px;letter-spacing:.04em}
+.mock-header .live-badge{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--red);letter-spacing:.12em;text-transform:uppercase}
+.mock-header .live-badge::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--red);animation:blink 1.6s infinite}
+.mock-body{display:flex;gap:20px;flex-wrap:wrap}
+.mock-sidebar{width:80px;display:flex;flex-direction:column;gap:8px}
+.mock-sidebar .nav-item{height:40px;background:rgba(255,255,255,.06);border-radius:6px;border-left:3px solid var(--red);opacity:.85}
+.mock-sidebar .nav-item:nth-child(2){border-left-color:transparent}
+.mock-sidebar .nav-item:nth-child(3){border-left-color:transparent}
+.mock-sidebar .nav-group{height:12px;background:rgba(255,255,255,.08);border-radius:2px;margin:4px 0}
+.mock-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:18px}
+.gauge-row{display:flex;align-items:center;gap:14px}
+.gauge-bar{height:8px;flex:1;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden}
+.gauge-fill{background:var(--red);height:100%;border-radius:4px;animation:fillBar 2s ease-out forwards}
+@keyframes fillBar{from{width:0}}
+.gauge-label{font-family:var(--mono);font-size:11px;color:var(--dim);min-width:88px}
+.mock-power{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:8px;padding:14px}
+.seg-btn-row{display:flex;gap:10px}
+.seg-btn{padding:10px 14px;background:var(--panel2);border:1px solid var(--line);border-radius:8px;font-family:var(--mono);font-size:12px;color:var(--muted);text-align:center;transition:border-color .15s}
+.seg-btn:hover{border-color:var(--line2)}
+.seg-btn.on{background:linear-gradient(150deg,rgba(255,45,77,.2),rgba(255,45,77,.04));border-color:rgba(255,45,77,.5);color:var(--red)}
+.mock-footer{display:flex;align-items:center;gap:10px;margin-top:auto;padding-top:12px;border-top:1px solid var(--line)}
+.mock-footer .led{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(52,201,143,.15),0 0 14px rgba(52,201,143,.5)}
+.mock-footer .status{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.mock-caption{margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--dim);text-align:center}
 
-/* ---------- section head ---------- */
-.sec-eyebrow{display:flex; align-items:center; gap:10px; font-family:var(--mono); font-size:11.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--red); margin-bottom:10px}
-.sec-eyebrow .sq{width:8px; height:8px; background:var(--red); transform:rotate(45deg)}
-.sec-title{font-family:var(--display); font-weight:700; font-size:clamp(26px,3.4vw,38px); letter-spacing:-.01em; line-height:1.12; text-wrap:balance}
-.sec-sub{color:var(--muted); max-width:46em; margin-top:12px}
+/* ---------- stats strip ---------- */
+.stats-wrap{background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.stats-track{display:flex;gap:56px;justify-content:space-around;padding-block:24px;font-family:var(--mono);font-size:13.5px;color:var(--muted);letter-spacing:.08em}
+.stats-track .highlight{color:var(--red);font-weight:600}
 
-/* ---------- galeri halaman ---------- */
-.gal{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:34px}
-.gcard{border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--surface); transition:border-color .15s, transform .15s}
-.gcard:hover{border-color:var(--red); transform:translateY(-2px)}
-.gcard img{width:100%; aspect-ratio:1180/780; object-fit:cover; object-position:top left; border-bottom:1px solid var(--line)}
-.gcard .gt{padding:14px 16px}
-.gcard .gt b{font-family:var(--display); font-weight:600; font-size:14px; display:block}
-.gcard .gt span{font-family:var(--mono); font-size:11px; color:var(--dim); display:block; margin-top:4px; line-height:1.5}
+/* ---------- fitur showcase ---------- */
+.showcase{margin-top:56px}
+.showcase-row{display:flex;align-items:center;gap:56px;margin-bottom:56px}
+.showcase-row.reverse{flex-direction:row-reverse}
+.feature-copy{flex:1;min-width:0}
+.feature-copy .tag{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--red);margin-bottom:10px;display:inline-block}
+.feature-copy h3{font-family:var(--display);font-weight:600;font-size:28px;line-height:1.18;margin-bottom:14px}
+.feature-copy p{color:var(--muted);font-size:15.5px;line-height:1.7}
+.feature-copy .chips{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap}
+.chip{font-family:var(--mono);font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:20px;padding:6px 12px;background:var(--surface3)}
+.icon-box{width:72px;height:72px;flex:none;border-radius:10px;background:linear-gradient(150deg,var(--panel3),var(--surface3));border:1px solid var(--line);display:grid;place-items:center;color:var(--red);box-shadow:0 2px 8px rgba(0,0,0,.45)}
+.icon-box svg{width:30px;height:30px;fill:none;stroke:var(--red);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 
 /* ---------- demo interaktif ---------- */
-.demobar{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:34px; padding:12px 16px;
-  border:1px solid var(--line2); border-radius:10px 10px 0 0; border-bottom:none; background:var(--surface2)}
-.demobar .dlab{font-family:var(--mono); font-size:11.5px; letter-spacing:.06em; color:var(--muted); display:flex; align-items:center; gap:9px}
-.demobar .dlab .sq{width:8px; height:8px; background:var(--red); transform:rotate(45deg); flex:none; animation:blink 2.4s infinite}
-.demobar .dopen{margin-left:auto; font-family:var(--mono); font-size:11.5px; color:var(--red); border:1px solid var(--line2); border-radius:6px; padding:6px 12px; transition:border-color .15s, background .15s}
-.demobar .dopen:hover{border-color:var(--red); background:rgba(255,45,77,.08)}
-.demoframe{border:1px solid var(--line2); border-radius:0 0 10px 10px; overflow:hidden; background:var(--bg);
-  box-shadow:0 26px 60px -30px rgba(0,0,0,.8), 0 0 50px -20px rgba(255,45,77,.15)}
-.demoframe iframe{display:block; width:100%; height:720px; border:0; background:var(--bg)}
-@media (max-width:900px){ .demoframe iframe{height:640px} }
-@media (max-width:560px){ .demoframe iframe{height:560px} }
+.demo-section{margin-top:64px;position:relative;border:1px solid var(--line2);border-radius:14px;background:linear-gradient(180deg,var(--surface3),var(--bg) 90%);box-shadow:0 46px 84px -24px rgba(0,0,0,.75),0 0 0 1px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.04)}
+.demo-header{display:flex;align-items:center;gap:12px;padding:20px 28px;border-bottom:1px solid var(--line);background:rgba(0,0,0,.3)}
+.demo-header .dot{width:10px;height:10px;border-radius:50%}
+.demo-header .dot:nth-child(1){background:var(--red)}
+.demo-header .dot:nth-child(2){background:#f0ab3d}
+.demo-header .dot:nth-child(3){background:var(--green)}
+.demo-header .title{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-left:8px;letter-spacing:.04em}
+.demo-header .live-badge{margin-left:auto;display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;color:var(--red);letter-spacing:.12em;text-transform:uppercase}
+.demo-header .live-badge::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--red);animation:blink 1.6s infinite}
+.demo-iframe{width:100%;height:780px;border:none;display:block}
 
-/* ---------- fitur inti ---------- */
-.grid4{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:34px}
-.fcard{border:1px solid var(--line); border-radius:10px; padding:20px 18px; background:linear-gradient(180deg, var(--surface2), transparent); position:relative; transition:border-color .15s, transform .15s}
-.fcard:hover{border-color:var(--line2); transform:translateY(-2px)}
-.fnum{font-family:var(--mono); font-size:10.5px; color:var(--dim); letter-spacing:.1em; margin-bottom:14px}
-.ficon{width:38px; height:38px; border-radius:8px; display:grid; place-items:center; margin-bottom:14px; background:var(--surface3)}
-.ficon svg{width:20px; height:20px; stroke:var(--red)}
-.ficon.cy svg{stroke:var(--cyan)}
-.ficon.gn svg{stroke:var(--green)}
-.fcard h3{font-family:var(--display); font-weight:600; font-size:15.5px; margin-bottom:8px}
-.fcard p{color:var(--muted); font-size:13.5px}
+/* ---------- CTA ---------- */
+.cta-wrap{margin-top:64px;text-align:center}
+.cta-wrap .tag{font-family:var(--mono);font-size:11.5px;color:var(--red);letter-spacing:.14em;text-transform:uppercase;margin-bottom:16px;display:inline-block}
+.cta-wrap .headline{font-family:var(--display);font-weight:700;font-size:clamp(34px,4.6vw,52px);line-height:1.1;margin-bottom:20px}
+.cta-wrap .sub{color:var(--muted);font-size:16px;max-width:36em;margin:0 auto 32px}
+.cta-wrap .btn-primary{display:inline-flex;align-items:center;gap:10px;padding:14px 32px;font-family:var(--display);font-weight:600;font-size:16px;background:linear-gradient(180deg,var(--red),var(--reddeep));color:#fff;border:none;border-radius:10px;cursor:pointer;box-shadow:0 0 0 1px rgba(255,45,77,.2),0 12px 32px -12px rgba(255,45,77,.55);transition:transform .15s,filter .15s}
+.cta-wrap .btn-primary:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.cta-wrap .btn-primary:active{transform:translateY(1px)}
+.cta-wrap .meta{margin-top:24px;display:flex;justify-content:center;gap:24px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.cta-wrap .meta b{color:var(--fg);font-weight:500}
 
-/* ---------- navigasi sidebar (cermin aplikasi) ---------- */
-.navmap{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:34px}
-.navcol{border:1px solid var(--line); border-radius:10px; padding:18px; background:var(--surface)}
-.navcol .grp{font-family:var(--mono); font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--dim); margin-bottom:12px}
-.navcol ul{list-style:none; display:grid; gap:6px}
-.navcol li{display:flex; align-items:baseline; gap:10px; font-family:var(--display); font-weight:600; font-size:13.5px}
-.navcol li small{font-family:var(--body); font-weight:400; font-size:11.5px; color:var(--dim)}
-
-/* ---------- fitur lengkap ---------- */
-.gridblocks{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:34px}
-.block{border:1px solid var(--line); border-left:3px solid var(--red); border-radius:10px; padding:22px 20px; background:var(--surface)}
-.block .bt{display:flex; align-items:center; gap:10px; font-family:var(--display); font-weight:600; font-size:15.5px; margin-bottom:8px}
-.block .bt .m{font-family:var(--mono); font-size:10.5px; color:var(--dim); letter-spacing:.1em}
-.block p{color:var(--muted); font-size:13.5px}
-.block code{font-family:var(--mono); font-size:11.5px; color:var(--cyan); background:rgba(69,200,240,.08); padding:1px 5px; border-radius:4px}
-
-/* ---------- status ---------- */
-.statusgrid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:34px}
-.st{border:1px solid var(--line); border-radius:10px; padding:20px; display:flex; gap:16px; align-items:flex-start; background:var(--surface)}
-.led{width:12px; height:12px; border-radius:50%; flex:none; margin-top:5px}
-.led.g{background:var(--green); box-shadow:0 0 0 4px rgba(52,201,143,.15), 0 0 18px rgba(52,201,143,.5)}
-.led.y{background:#f0ab3d; box-shadow:0 0 0 4px rgba(240,171,61,.15), 0 0 18px rgba(240,171,61,.5)}
-.led.r{background:var(--red); box-shadow:0 0 0 4px rgba(255,45,77,.15), 0 0 18px rgba(255,45,77,.5)}
-.led.c{background:var(--cyan); box-shadow:0 0 0 4px rgba(69,200,240,.15)}
-.st h4{font-family:var(--display); font-weight:600; font-size:14.5px; margin-bottom:5px}
-.st p{color:var(--muted); font-size:13px}
-.st .tag{font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; display:inline-block; margin-bottom:8px; padding:3px 8px; border-radius:4px}
-.st .tag.g{color:var(--green); background:rgba(52,201,143,.1)}
-.st .tag.y{color:#f0ab3d; background:rgba(240,171,61,.1)}
-.st .tag.r{color:var(--red); background:rgba(255,45,77,.1)}
-.st .tag.c{color:var(--cyan); background:rgba(69,200,240,.1)}
-
-/* ---------- unduh ---------- */
-.dl{border:1px solid var(--line2); border-radius:12px; padding:26px; background:linear-gradient(180deg, var(--surface3), var(--surface)); margin-top:34px; display:grid; grid-template-columns:1fr auto; gap:20px; align-items:center}
-.dl .dnum{font-family:var(--mono); font-size:10.5px; color:var(--dim); letter-spacing:.14em; text-transform:uppercase; margin-bottom:8px}
-.dl h3{font-family:var(--display); font-weight:700; font-size:20px}
-.dl .pick{font-family:var(--mono); font-size:11px; color:var(--red); letter-spacing:.06em; margin-top:4px}
-.dl .meta{font-family:var(--mono); font-size:11.5px; color:var(--muted); margin-top:10px; display:flex; flex-wrap:wrap; gap:6px 16px}
-.dl .meta b{color:var(--fg); font-weight:500}
-.dl .rowm{margin-top:14px; display:flex; flex-wrap:wrap; gap:8px}
-.reqwrap{margin-top:22px; display:flex; flex-wrap:wrap; gap:8px}
-.reqwrap span{font-family:var(--mono); font-size:11px; color:var(--muted); border:1px solid var(--line); border-radius:20px; padding:5px 12px}
+/* ---------- status ringkas ---------- */
+.statusgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:34px}
+.st{border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;gap:16px;align-items:flex-start;background:var(--surface)}
+.led{width:12px;height:12px;border-radius:50%;flex:none;margin-top:5px}
+.led.g{background:var(--green);box-shadow:0 0 0 4px rgba(52,201,143,.15),0 0 18px rgba(52,201,143,.5)}
+.led.y{background:#f0ab3d;box-shadow:0 0 0 4px rgba(240,171,61,.15),0 0 18px rgba(240,171,61,.5)}
+.led.r{background:var(--red);box-shadow:0 0 0 4px rgba(255,45,77,.15),0 0 18px rgba(255,45,77,.5)}
+.led.c{background:var(--cyan);box-shadow:0 0 0 4px rgba(69,200,240,.15)}
+.st h4{font-family:var(--display);font-weight:600;font-size:14.5px;margin-bottom:5px}
+.st p{color:var(--muted);font-size:13px}
+.st .tag{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;display:inline-block;margin-bottom:8px;padding:3px 8px;border-radius:4px}
+.st .tag.g{color:var(--green);background:rgba(52,201,143,.1)}
+.st .tag.y{color:#f0ab3d;background:rgba(240,171,61,.1)}
+.st .tag.r{color:var(--red);background:rgba(255,45,77,.1)}
+.st .tag.c{color:var(--cyan);background:rgba(69,200,240,.1)}
 
 /* ---------- footer ---------- */
-.ft{border-top:1px solid var(--line); padding-block:28px 40px}
-.ft .wrap{display:flex; flex-wrap:wrap; gap:14px; align-items:center; color:var(--dim); font-family:var(--mono); font-size:11.5px}
-.ft .r{margin-left:auto; display:flex; gap:18px}
-.ft a{color:var(--muted); transition:color .15s}
-.ft a:hover{color:var(--red)}
+.footer{border-top:1px solid var(--line);padding-block:28px}
+.footer .wrap{display:flex;flex-wrap:wrap;gap:14px;align-items:center;color:var(--dim);font-family:var(--mono);font-size:11.5px}
+.footer .r{margin-left:auto;display:flex;gap:18px}
+.footer a{color:var(--muted);transition:color .15s}
+.footer a:hover{color:var(--red)}
 
+/* ---------- responsive ---------- */
 @media (max-width:900px){
-  .hero .wrap{grid-template-columns:1fr; gap:36px}
-  .grid4{grid-template-columns:1fr 1fr}
-  .gridblocks,.statusgrid{grid-template-columns:1fr}
-  .gal{grid-template-columns:1fr 1fr}
-  .navmap{grid-template-columns:1fr}
-  .dl{grid-template-columns:1fr}
+  .hero{grid-template-columns:1fr;text-align:center;gap:32px}
+  .hero-facts{justify-content:center}
+  .showcase-row,.showcase-row.reverse{flex-direction:column}
+  .feature-copy h3{text-align:center}
+  .feature-copy .chips{justify-content:center}
+  .demo-iframe{height:560px}
 }
 @media (max-width:560px){
-  .grid4,.gal{grid-template-columns:1fr}
   .nav{display:none}
+  .stats-track{flex-wrap:wrap;justify-content:center;gap:24px}
+  .demo-iframe{height:420px}
 }
 </style>
 </head>
 <body>
-
 <div class="bgfx"></div>
-
-<!-- ======================= topbar ======================= -->
-<header class="topbar">
+<header class="topnav">
   <div class="wrap">
     <div class="brand">
       <span class="mark">
@@ -248,285 +232,229 @@ img{max-width:100%; display:block}
       AllSense<span class="tag">Control</span>
     </div>
     <nav class="nav">
-      <a href="#tampilan">Tampilan</a>
-      <a href="#halaman">Halaman</a>
-      <a href="#fitur">Fitur</a>
+      <a href="#hero">Tampilan</a>
+      <a href="#showcase">Halaman</a>
+      <a href="#demo">Fitur</a>
       <a href="#status">Status</a>
-      <a href="#unduh" class="cta btn primary" style="padding:8px 16px;font-size:13px">Unduh</a>
+      <a href="#cta" class="cta-btn">Unduh</a>
     </nav>
   </div>
 </header>
-
-<!-- ======================= hero ======================= -->
-<section class="hero">
-  <div class="wrap">
-    <div>
+<main>
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-copy">
       <div class="eyebrow">v1.2.0 · rilis stabil</div>
-      <h1>Pusat kendali<br><span class="rd">laptop</span> dalam satu klik.</h1>
-      <p class="sub">Satu tombol mengganti mode daya AC/DC — Efisiensi, Balanced, Performance. Sambil itu, suhu sistem (ACPI), GPU core, dan beban RAM terbaca langsung. Tanpa admin, tanpa driver ring0, tanpa ribet.</p>
-      <div class="heroacts">
-        <a class="btn primary" href="https://github.com/Maxodus126/ALL-SENSE/releases/latest/download/AllSense-Setup.exe">Unduh Instaler <span class="d">AllSense-Setup.exe</span></a>
-        <a class="btn" href="https://github.com/Maxodus126/ALL-SENSE/releases/latest/download/AllSense-Setup.zip">Unduh Zip</a>
-      </div>
-      <div class="req">
-        <span>Windows 10/11 x64</span>
-        <span>.NET 8 terbungkus</span>
-        <span>Tanpa admin</span>
-        <span>Self-contained · 1 file</span>
+      <h1>Kontrol laptop dalam satu klik yang kuat.</h1>
+      <p class="sub">AC/DC terpisah — Efisiensi/Balanced/Performa — tersimpan di profil Windows, sambil zona termal ACPI, sensor GPU core, dan beban RAM terbaca tiap 2 detik, tanpa admin, tanpa ribet.</p>
+      <div class="hero-facts">
+        <span class="hero-fact">Windows 10/11 · x64</span>
+        <span class="hero-fact">.NET 8 terbungkus</span>
+        <span class="hero-fact">Tanpa admin / UAC</span>
+        <span class="hero-fact">Self-contained · 1 file</span>
       </div>
     </div>
-
-    <!-- screenshot ASLI aplikasi yang berjalan -->
-    <div>
-      <div class="shot">
-        <div class="pwin">
-          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-          <span class="ttl">AllSense Control — v1.2.0</span>
-          <span class="live">Live</span>
-        </div>
-        <img src="appshot.png" alt="Tangkapan layar asli dashboard AllSense Control: sidebar navigasi, kartu perangkat Nitro NL16-71G, status mode Efisiensi AC &amp; DC, pemantauan suhu sistem 28°C (ACPI), GPU 53°C core, RAM 82%, dan kartu Power Mode." width="1180" height="780">
-      </div>
-      <div class="shotcap">Tangkapan layar asli — aplikasi berjalan di Nitro NL16-71G</div>
-    </div>
-  </div>
-</section>
-
-<!-- ======================= tampilan ======================= -->
-<section class="pad hairline" id="tampilan">
-  <div class="wrap">
-    <div class="sec-eyebrow"><span class="sq"></span> Di layar</div>
-    <h2 class="sec-title">Navy gelap, aksen merah — persis aplikasinya.</h2>
-    <p class="sec-sub">Tema situs ini adalah tema aplikasi: latar <code style="font-family:var(--mono);color:var(--cyan)">#070B12</code>, panel <code style="font-family:var(--mono);color:var(--cyan)">#111925</code>, merah <code style="font-family:var(--mono);color:var(--red)">#FF2D4D</code> untuk daya &amp; status, biru <code style="font-family:var(--mono);color:var(--cyan)">#45C8F0</code> untuk data, hijau <code style="font-family:var(--mono);color:var(--green)">#34C98F</code> untuk kondisi sehat. Native WPF — tanpa WebView2, hemat memori.</p>
-  </div>
-</section>
-
-<!-- ======================= halaman aplikasi ======================= -->
-<section class="pad hairline" id="halaman">
-  <div class="wrap">
-    <div class="sec-eyebrow"><span class="sq"></span> Halaman</div>
-    <h2 class="sec-title">Sembilan halaman, satu sidebar.</h2>
-    <p class="sec-sub">Navigasi mengikuti struktur aplikasi: UTAMA untuk kendali, SISTEM untuk informasi perangkat, LAINNYA untuk konfigurasi.</p>
-    <div class="navmap">
-      <div class="navcol">
-        <div class="grp">Utama</div>
-        <ul>
-          <li>Dashboard <small>ringkasan sensor + mode</small></li>
-          <li>Power Center <small>mode AC/DC, terapkan</small></li>
-          <li>Cooling <small>grid suhu 2×2</small></li>
-          <li>Battery <small>level &amp; status daya</small></li>
-        </ul>
-      </div>
-      <div class="navcol">
-        <div class="grp">Sistem</div>
-        <ul>
-          <li>My Laptop <small>CPU · GPU · RAM</small></li>
-          <li>Storage <small>volume &amp; pemakaian</small></li>
-          <li>Gaming Hub <small>profil performa</small></li>
-        </ul>
-      </div>
-      <div class="navcol">
-        <div class="grp">Lainnya</div>
-        <ul>
-          <li>Settings <small>hotkey, repo, polling</small></li>
-          <li>About <small>versi &amp; lisensi</small></li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Demo interaktif live (design asli aplikasi, 9 halaman bisa diklik) -->
-    <div class="demobar">
-      <span class="dlab"><span class="sq"></span> Demo interaktif — klik sidebar-nya, halaman bisa dipindah</span>
-      <a class="dopen" href="demo.html" target="_blank" rel="noopener">Buka layar penuh ↗</a>
-    </div>
-    <div class="demoframe">
-      <iframe src="demo.html" title="Demo interaktif AllSense Control — tampilan dan seluruh fitur aplikasi" loading="lazy"></iframe>
-    </div>
-  </div>
-</section>
-
-<!-- ======================= fitur inti ======================= -->
-<section class="pad hairline" id="fitur">
-  <div class="wrap">
-    <div class="sec-eyebrow"><span class="sq"></span> Fitur inti</div>
-    <h2 class="sec-title">Esensial. Satu klik, langsung bekerja.</h2>
-    <div class="grid4">
-      <div class="fcard">
-        <div class="fnum">01</div>
-        <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg></div>
-        <h3>Mode Daya AC/DC</h3>
-        <p>Ganti <b>Efisiensi / Balanced / Performance</b> dalam satu klik — terpisah untuk colokan dan baterai, tersimpan di profil Windows.</p>
-      </div>
-      <div class="fcard">
-        <div class="fnum">02</div>
-        <div class="ficon cy"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 1 6 6c0 4-6 9-6 9s-6-5-6-9a6 6 0 0 1 6-6z"/><circle cx="12" cy="9" r="2"/></svg></div>
-        <h3>Suhu Live</h3>
-        <p>Sistem (zona termal ACPI), GPU (sensor <b>core</b>), dan beban RAM — terpolling tiap 5 detik di thread belakang, UI tetap halus.</p>
-      </div>
-      <div class="fcard">
-        <div class="fnum">03</div>
-        <div class="ficon gn"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h10M7 13h6"/></svg></div>
-        <h3>Hotkey Global</h3>
-        <p>Ctrl+Alt+A memunculkan jendela dari mana pun — bisa di-custom di Settings, dengan rollback otomatis bila bentrok.</p>
-      </div>
-      <div class="fcard">
-        <div class="fnum">04</div>
-        <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div>
-        <h3>Ringan &amp; Tanpa Admin</h3>
-        <p>±200 MB RAM, native WPF tanpa WebView2, tanpa UAC. Jalankan langsung — tidak perlu izin atau instalasi sistem.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ======================= fitur lengkap ======================= -->
-<section class="pad hairline">
-  <div class="wrap">
-    <div class="sec-eyebrow"><span class="sq"></span> Detail teknis</div>
-    <h2 class="sec-title">Detail yang kejujurannya dijaga.</h2>
-    <div class="gridblocks">
-      <div class="block">
-        <div class="bt"><span class="m">A</span> Pembacaan jujur</div>
-        <p>Suhu sistem diambil dari <code>zona termal ACPI</code> (~28°C idle), bukan core MSR yang butuh driver ring0. GPU membaca <code>sensor inti (core)</code>, bukan <code>Hot Spot</code>/<code>Memory Junction</code> yang jauh lebih panas dan tidak dibandingkan dengan Task Manager.</p>
-      </div>
-      <div class="block">
-        <div class="bt"><span class="m">B</span> Guard pengaman bacaan</div>
-        <p>Jika sensor GPU kedua (iGPU) tidak ada nilainya, <code>NaN</code> diabaikan dengan guard tersendiri — tampilan tidak pernah jatuh ke angka rusak.</p>
-      </div>
-      <div class="block">
-        <div class="bt"><span class="m">C</span> Update lewat GitHub</div>
-        <p>Tombol <b>Cek update</b> mengambil rilis stabil terbaru (semver, abaikan prerelease), menginstal sendiri lewat <code>updater.bat</code>, menunggu proses mati, lalu restart. Repo diset di Settings.</p>
-      </div>
-      <div class="block">
-        <div class="bt"><span class="m">D</span> Selftest built-in</div>
-        <p><code>--selftest</code> memverifikasi WMI, mode daya, sensor, dan roundtrip — exit 0 berarti lolos. Semua uji hijau: power, cpu_sensor, gpu_sensor, memory, storage, hotkey, update_tagparse.</p>
-      </div>
-      <div class="block">
-        <div class="bt"><span class="m">E</span> Crash log</div>
-        <p>Error yang tidak tertangkap ditulis ke <code>%TEMP%\AllSense-selftest\crash.log</code>, dengan dark title bar dan manajemen startup yang sudah teruji.</p>
-      </div>
-      <div class="block">
-        <div class="bt"><span class="m">F</span> Polling thread belakang</div>
-        <p>Pembacaan WMI berjalan di <code>Task.Run</code> dengan guard anti-tumpang-tindih; UI diperbarui via dispatcher. Layar tidak pernah membeku walau WMI lambat.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ======================= status ======================= -->
-<section class="pad hairline" id="status">
-  <div class="wrap">
-    <div class="sec-eyebrow"><span class="sq"></span> Status</div>
-    <h2 class="sec-title">Empat keadaan. Semua ditampilkan apa adanya.</h2>
-    <div class="statusgrid">
-      <div class="st">
-        <span class="led g"></span>
-        <div>
-          <span class="tag g">Sehat</span>
-          <h4>Sensor terbaca, suhu normal</h4>
-          <p>WMI merespons, zona termal ada, GPU core terbaca. Status hijau dengan angka live tiap 5 detik.</p>
+    <div class="hero-mock">
+      <div class="mock-frame">
+        <div class="mock-content">
+          <div class="mock-header">
+            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+          </div>
+          <div class="mock-body">
+            <div class="mock-sidebar">
+              <div class="nav-item active"></div>
+              <div class="nav-item"></div>
+              <div class="nav-item"></div>
+              <div class="nav-group"></div>
+              <div class="nav-item"></div>
+              <div class="nav-item"></div>
+            </div>
+            <div class="mock-main">
+              <div class="gauge-row">
+                <div class="gauge-bar"><div class="gauge-fill" style="width:28%"></div></div>
+                <div class="gauge-label">SISTEM 28°C</div>
+              </div>
+              <div class="gauge-row">
+                <div class="gauge-bar"><div class="gauge-fill" style="width:53%"></div></div>
+                <div class="gauge-label">GPU CORE 53°C</div>
+              </div>
+              <div class="gauge-row">
+                <div class="gauge-bar"><div class="gauge-fill" style="width:82%"></div></div>
+                <div class="gauge-label">RAM 82%</div>
+              </div>
+              <div class="mock-power">
+                <div class="seg-btn-row">
+                  <div class="seg-btn on">Efisiensi</div>
+                  <div class="seg-btn">Balanced</div>
+                  <div class="seg-btn">Performa</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mock-footer">
+            <div class="led green"></div>
+            <span class="status">Sensor aktif</span>
+          </div>
         </div>
       </div>
-      <div class="st">
-        <span class="led y"></span>
-        <div>
-          <span class="tag y">Panas</span>
-          <h4>Melebihi ambang aman</h4>
-          <p>Bacaan menembus ambang (mis. GPU core &gt; 80°C). AllSense menyorot sensor yang panas, bukan menghiburmu.</p>
+      <div class="mock-caption">AllSense Control — dashboard yang tampak nyata dalam browser Anda</div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats-wrap">
+    <div class="wrap">
+      <div class="stats-track">
+        <span>OS <span class="highlight">Windows 11 x64</span></span>
+        <span>Framework <span class="highlight">.NET 8</span></span>
+        <span>Hotkey <span class="highlight">Ctrl+Alt+A</span></span>
+        <span>Polling <span class="highlight">Live</span></span>
+        <span>Selftest <span class="highlight">Lolos</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SHOWCASE -->
+  <section class="showcase" id="showcase">
+    <div class="wrap">
+      <div class="showcase-row">
+        <div class="icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+        </div>
+        <div class="feature-copy">
+          <div class="tag">MODE DAYA</div>
+          <h3>Power Mode AC/DC — Tersimpan di Windows</h3>
+          <p>Ganti Efisiensi/Balanced/Performa dalam satu klik, terpisah untuk colokan & baterai, tanpa reinstall. Dua keluarga GUID: PowerSetUserConfigured{AC,DC}PowerMode → Efficiency/Balanced/Performance; PowerSetActiveScheme → skema fallback.</p>
+          <div class="chips"><span class="chip">AC</span><span class="chip">DC</span><span class="chip">Profil</span></div>
         </div>
       </div>
-      <div class="st">
-        <span class="led c"></span>
-        <div>
-          <span class="tag c">Mode asing</span>
-          <h4>GUID mode tidak dikenali</h4>
-          <p>Bila API mode modern menolak (kode 87), AllSense jatuh ke skema legacy. Dua keluarga GUID tidak pernah dipertukarkan.</p>
+      <div class="showcase-row reverse">
+        <div class="icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M4.5 12h3l1.5-4 2 8 1.5-6 1 2h4.5"/></svg>
+        </div>
+        <div class="feature-copy">
+          <div class="tag">SUHU SISTEM</div>
+          <h3>Suhu jujur (zona ACPI) + GPU core</h3>
+          <p>Sistem baca zona termal ACPI (~28°C idle), GPU baca sensor <b>core</b>, bukan <code>Hot Spot</code>/<code>Memory Junction</code> yang jauh lebih panas. Guard <code>!float.IsNaN(tg)</code> mencegah NaN.</p>
+          <div class="chips"><span class="chip">ACPI</span><span class="chip">Core sensor</span><span class="chip">5 detik interval</span></div>
         </div>
       </div>
-      <div class="st">
-        <span class="led r"></span>
-        <div>
-          <span class="tag r">Sensor tiada</span>
-          <h4>Zona termal / sensor GPU absen</h4>
-          <p>Nilai <code>NaN</code> dibuang, tidak dihitung. Status merah hanya muncul saat benar-benar tidak ada data.</p>
+      <div class="showcase-row">
+        <div class="icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h10M7 13h6"/></svg>
+        </div>
+        <div class="feature-copy">
+          <div class="tag">HOTKEY GLOBAL</div>
+          <h3>Ctrl+Alt+A (custom di Settings)</h3>
+          <p>Bisa di-custom di Settings; rollback otomatis bila bentrok; daftar ulang dengan <code>SaveSettings</code>. No admin needed.</p>
+          <div class="chips"><span class="chip">RegisterHotKey</span><span class="chip">Custom</span><span class="chip">Auto-rollback</span></div>
+        </div>
+      </div>
+      <div class="showcase-row reverse">
+        <div class="icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+        </div>
+        <div class="feature-copy">
+          <div class="tag">RINGAN & MINIMAL</div>
+          <h3>Native WPF, no WebView2</h3>
+          <p>±200 MB RAM, no admin, no install, no UAC prompt. Single-file self-contained executable.</p>
+          <div class="chips"><span class="chip">WPF native</span><span class="chip">No WebView2</span><span class="chip">Single file</span></div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ======================= unduh ======================= -->
-<section class="pad hairline" id="unduh">
-  <div class="wrap">
-    <div class="sec-eyebrow"><span class="sq"></span> Unduh</div>
-    <h2 class="sec-title">Ambil rilisnya. Langsung jalan.</h2>
+  <!-- INTERAKTIF DEMO -->
+  <section class="demo-section" id="demo">
+    <div class="demo-header">
+      <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+      <span class="title">AllSense.App — MainWindow.xaml.cs</span>
+      <span class="live-badge">Live</span>
+    </div>
+    <iframe class="demo-iframe" src="demo.html" title="Demo interaktif AllSense Control" loading="lazy" allowfullscreen></iframe>
+  </section>
 
-    <div class="dl">
-      <div>
-        <div class="dnum">Instaler · Direkomendasikan</div>
-        <h3>AllSense-Setup.exe</h3>
-        <div class="pick">self-contained · per-user, tanpa admin</div>
-        <div class="meta"><span>Versi: <b>v1.2.0</b></span><span>Platform: <b>Windows x64</b></span></div>
-        <div class="rowm">
-          <a class="btn primary" href="https://github.com/Maxodus126/ALL-SENSE/releases/latest/download/AllSense-Setup.exe">Unduh Instaler</a>
-          <a class="btn" href="https://github.com/Maxodus126/ALL-SENSE/releases/latest/download/AllSense-Setup.zip">Unduh Zip</a>
-        </div>
+  <!-- STATUS (singkat) -->
+  <section class="pad hairline" id="status">
+    <div class="wrap">
+      <div class="section">
+        <h3>Alasan mengapa AllSense Control beda</h3>
       </div>
-      <div class="dlwhere">
-        <div class="dnum">Portabel</div>
-        <h3>AllSense-v1.0-x64.zip</h3>
-        <div class="pick">ekstrak, jalankan, selesai</div>
-        <div class="meta"><span>File: <b>AllSense-v1.0-x64.zip</b></span></div>
-        <div class="rowm">
-          <a class="btn" href="https://github.com/Maxodus126/ALL-SENSE/releases/latest/download/AllSense-v1.0-x64.zip">Unduh Portabel</a>
+      <div class="statusgrid">
+        <div class="st">
+          <span class="led g"></span>
+          <div>
+            <span class="tag g">Sehat</span>
+            <h4>Sensor terbaca, suhu normal</h4>
+            <p>WMI merespons, zona termal ada, GPU core terbaca. Status hijau dengan angka live tiap 5 detik.</p>
+          </div>
+        </div>
+        <div class="st">
+          <span class="led r"></span>
+          <div>
+            <span class="tag r">Sensor tiada</span>
+            <h4>Zona termal / sensor GPU absen</h4>
+            <p>Nilai NaN dibuang, tidak dihitung. Status merah hanya muncul saat benar-benar tidak ada data.</p>
+          </div>
+        </div>
+        <div class="st">
+          <span class="led c"></span>
+          <div>
+            <span class="tag c">Mode asing</span>
+            <h4>GUID mode tidak dikenali</h4>
+            <p>Bila API mode modern menolak (kode 87), AllSense jatuh ke skema legacy. Dua keluarga GUID tidak pernah dipertukarkan.</p>
+          </div>
+        </div>
+        <div class="st">
+          <span class="led y"></span>
+          <div>
+            <span class="tag y">Panas</span>
+            <h4>Melebihi ambang aman</h4>
+            <p>Bacaan menembus ambang (mis. GPU core > 80°C). AllSense menyorot sensor yang panas, bukan menghiburmu.</p>
+          </div>
         </div>
       </div>
     </div>
+  </section>
 
-    <div class="reqwrap">
-      <span>Windows 10/11 · x64</span>
-      <span>.NET 8 terbungkus · tanpa instal</span>
-      <span>Tanpa admin / UAC</span>
-      <span>Single-file self-contained</span>
-      <span>Selftest lolos · exit 0</span>
+  <!-- CTA -->
+  <section class="cta-wrap" id="cta">
+    <div class="wrap">
+      <div class="tag">Bisa langsung dijalankan</div>
+      <h2 class="headline">Bawa laptop Anda ke level selanjutnya</h2>
+      <p class="sub">AllSense Control — satu-satunya power mode + dashboard suhu yang benar-benar native Windows, tanpa cloud, tanpa login, tanpa admin.</p>
+      <a href="https://github.com/Maxodus126/ALL-SENSE/releases/latest/download/AllSense-Setup.exe" class="btn-primary" target="_blank" rel="noopener">
+        Unduh AllSense-Setup.exe
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:6px"><path d="M12 5v14m0 0l-7-7m7 7l7-7"/></svg>
+      </a>
+      <div class="meta">
+        <span>v1.2.0 · Windows 10/11 x64 · .NET 8 · Self-contained</span>
+        <span>· Selftest lolos · exit 0</span>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
+</main>
 
-<!-- ======================= footer ======================= -->
-<footer class="ft">
+<footer class="footer">
   <div class="wrap">
-    <span>AllSense Control · v1.2.0</span>
-    <span>Windows · WPF/.NET 8 · x64</span>
-    <div class="r">
-      <a href="#tampilan">Tampilan</a>
-      <a href="#halaman">Halaman</a>
-      <a href="#fitur">Fitur</a>
+    <div class="brand">AllSense Control · v1.2.0</div>
+    <div class="links">
+      <a href="#hero">Tampilan</a>
+      <a href="#showcase">Halaman</a>
+      <a href="#demo">Fitur</a>
       <a href="#status">Status</a>
-      <a href="#unduh">Unduh</a>
-      <a href="https://github.com/Maxodus126/ALL-SENSE">GitHub</a>
+      <a href="#cta">Unduh</a>
+      <a href="https://github.com/Maxodus126/ALL-SENSE" target="_blank" rel="noopener">GitHub</a>
     </div>
   </div>
 </footer>
 
 <script>
-/* Interaksi kecil: highlight nav saat scroll (progressive; tanpa library). */
-(function(){
-  var links = document.querySelectorAll('.nav a[href^="#"]');
-  var secs = [];
-  links.forEach(function(a){
-    var id = a.getAttribute('href').slice(1);
-    var el = document.getElementById(id);
-    if(el) secs.push({a:a, el:el});
-  });
-  function onScroll(){
-    var y = window.scrollY + 120;
-    var cur = null;
-    secs.forEach(function(s){ if(s.el.offsetTop <= y) cur = s; });
-    secs.forEach(function(s){ s.a.style.color = (s===cur) ? 'var(--red)' : ''; });
-  }
-  window.addEventListener('scroll', onScroll, {passive:true});
-  onScroll();
-})();
+// scroll-reveal sederhana
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('active'); obs.unobserve(e.target); } });
+}, { threshold: .12 });
+document.querySelectorAll('.scroll-reveal').forEach(el => obs.observe(el));
 </script>
 </body>
 </html>
