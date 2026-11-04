@@ -18,6 +18,8 @@
 :root{
   --bg:#070B12;
   --surface:#0C121C;
+  --surface2:#121D2B;
+  --surface3:#172332;
   --panel:#111925;
   --panel2:#172230;
   --panel3:#1E2C3D;
@@ -39,7 +41,7 @@
   color-scheme:dark;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;overflow-x:clip}
 body{
   background:var(--bg); color:var(--fg);
   font-family:var(--body); font-size:16px; line-height:1.55;
@@ -89,17 +91,17 @@ img{max-width:100%;display:block}
 .hero{position:relative;padding-block:96px 0;display:grid;grid-template-columns:1.08fr .92fr;gap:48px;align-items:center}
 .hero-copy .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--red);margin-bottom:18px}
 .hero-copy .eyebrow::before{content:"";width:7px;height:7px;background:var(--red);box-shadow:0 0 0 3px rgba(255,45,77,.18);animation:blink 2.4s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
 .hero-copy h1{font-family:var(--display);font-weight:700;font-size:clamp(46px,5.8vw,72px);line-height:1.05;letter-spacing:-.01em;margin-top:8px}
 .hero-copy .sub{color:var(--muted);font-size:17px;max-width:34em;margin-top:24px;line-height:1.6}
 .hero-facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:32px}
 .hero-fact{font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;color:var(--muted);border:1px solid var(--line);border-radius:20px;padding:6px 14px;background:var(--surface2)}
 
 /* Device mockup tanpa screenshot */
-.hero-mock{position:relative;z-index:2;transform:perspective(1200px) rotateY(-6deg) rotateX(2deg);transition:transform .3s cubic-bezier(.2,.7,.2,1);box-shadow:0 40px 80px -30px rgba(0,0,0,.7)}
+.hero-mock{position:relative;z-index:2;width:calc(100% - 48px);margin-inline:auto;transform:perspective(1200px) rotateY(-6deg) rotateX(2deg);transition:transform .3s cubic-bezier(.2,.7,.2,1);box-shadow:0 40px 80px -30px rgba(0,0,0,.7)}
 .hero-mock:hover{transform:perspective(1200px) rotateY(-2deg) rotateX(1deg)}
 .hero-mock::before{content:"";position:absolute;inset:-20px;border-radius:14px;background:linear-gradient(140deg,var(--red),var(--reddeep));opacity:.35;filter:blur(26px);z-index:-1;animation:pulse 4s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:.25}50%{opacity:.45}
+@keyframes pulse{0%,100%{opacity:.25}50%{opacity:.45}}
 .mock-frame{border:1px solid var(--line2);border-radius:12px;overflow:hidden;background:var(--panel);box-shadow:
   0 20px 40px -16px rgba(0,0,0,.6),
   0 0 0 1px rgba(0,0,0,.45),
@@ -178,6 +180,8 @@ img{max-width:100%;display:block}
 .cta-wrap .meta b{color:var(--fg);font-weight:500}
 
 /* ---------- status ringkas ---------- */
+.sec-title{font-family:var(--display);font-weight:700;font-size:clamp(26px,3.2vw,36px);line-height:1.15}
+.sec-sub{color:var(--muted);margin-top:10px;font-size:15.5px;max-width:38em}
 .statusgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:34px}
 .st{border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;gap:16px;align-items:flex-start;background:var(--surface)}
 .led{width:12px;height:12px;border-radius:50%;flex:none;margin-top:5px}
@@ -196,7 +200,7 @@ img{max-width:100%;display:block}
 /* ---------- footer ---------- */
 .footer{border-top:1px solid var(--line);padding-block:28px}
 .footer .wrap{display:flex;flex-wrap:wrap;gap:14px;align-items:center;color:var(--dim);font-family:var(--mono);font-size:11.5px}
-.footer .r{margin-left:auto;display:flex;gap:18px}
+.footer .r,.footer .links{margin-left:auto;display:flex;gap:18px}
 .footer a{color:var(--muted);transition:color .15s}
 .footer a:hover{color:var(--red)}
 
@@ -209,10 +213,17 @@ img{max-width:100%;display:block}
   .feature-copy .chips{justify-content:center}
   .demo-iframe{height:560px}
 }
+@media (max-width:700px){
+  .statusgrid{grid-template-columns:1fr}
+}
 @media (max-width:560px){
   .nav{display:none}
+  .topnav .wrap{gap:10px}
+  .cta-btn{padding:10px 14px;font-size:12.5px}
   .stats-track{flex-wrap:wrap;justify-content:center;gap:24px}
   .demo-iframe{height:420px}
+  .hero{padding-block:56px 0}
+  .hero-mock{width:100%;transform:none}
 }
 </style>
 </head>
@@ -236,8 +247,8 @@ img{max-width:100%;display:block}
       <a href="#showcase">Halaman</a>
       <a href="#demo">Fitur</a>
       <a href="#status">Status</a>
-      <a href="#cta" class="cta-btn">Unduh</a>
     </nav>
+    <a href="#cta" class="cta-btn">Unduh</a>
   </div>
 </header>
 <main>
@@ -378,7 +389,8 @@ img{max-width:100%;display:block}
   <section class="pad hairline" id="status">
     <div class="wrap">
       <div class="section">
-        <h3>Alasan mengapa AllSense Control beda</h3>
+        <h3 class="sec-title">Alasan mengapa AllSense Control beda</h3>
+        <p class="sec-sub">Empat estado, empat indikator — jujur tentang apa yang terbaca.</p>
       </div>
       <div class="statusgrid">
         <div class="st">
