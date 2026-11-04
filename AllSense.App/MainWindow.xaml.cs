@@ -420,9 +420,9 @@ public partial class MainWindow : Window
         ChipSensor.Text = s.Avail ? "Sensor aktif" : "Sensor idle";
         ChipSrc.Text = s.Ac == null ? "—" : s.Ac.Value ? "AC" : "Baterai";
 
-        // Dashboard gauges (load %)
-        SetGauge(GaugeCpu, s.CpuL, null);
-        SetGauge(GaugeGpu, s.GpuL, null);
+        // Dashboard gauges — SISTEM/GPU tampilkan SUHU (selaras halaman Cooling); bar = beban.
+        SetGauge(GaugeCpu, (float)PctTemp(s.CpuT), Fmt(s.CpuT));
+        SetGauge(GaugeGpu, (float)PctTemp(s.GpuT), Fmt(s.GpuT));
         SetGauge(GaugeRam, (float)ramPct, null);
         SetGauge(GaugeBat, s.Bat.ChargePercent ?? 0, null);
         BarCpu.Value = Clamp(s.CpuL);

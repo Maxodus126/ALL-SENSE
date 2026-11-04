@@ -272,7 +272,7 @@
                                         <Grid><TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Red}" Text="SISTEM"/>
                                               <Border HorizontalAlignment="Right" CornerRadius="5" Padding="7,2" BorderBrush="{StaticResource Line}" BorderThickness="1"><TextBlock FontSize="9" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Txt3}" Text="SUHU SISTEM"/></Border></Grid>
                                         <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
-                                            <local:RingGauge x:Name="GaugeCpu" Width="80" Height="80" Value="0" Accent="{StaticResource Red}"/>
+                                            <local:RingGauge x:Name="GaugeCpu" Width="80" Height="80" Value="0" Accent="{StaticResource Red}" Unit="°C"/>
                                             <StackPanel Margin="14,0,0,0" VerticalAlignment="Center">
                                                 <TextBlock x:Name="TileCpuName" FontSize="13.5" FontWeight="Bold"/>
                                                 <TextBlock x:Name="TileCpuSub" FontSize="11" Foreground="{StaticResource Txt3}" Margin="0,2,0,0"/>
@@ -288,7 +288,7 @@
                                         <Grid><TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Blueprint}" Text="GPU"/>
                                               <Border HorizontalAlignment="Right" CornerRadius="5" Padding="7,2" BorderBrush="{StaticResource Line}" BorderThickness="1"><TextBlock FontSize="9" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Txt3}" Text="CORE TEMP"/></Border></Grid>
                                         <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
-                                            <local:RingGauge x:Name="GaugeGpu" Width="80" Height="80" Value="0" Accent="{StaticResource Blueprint}"/>
+                                            <local:RingGauge x:Name="GaugeGpu" Width="80" Height="80" Value="0" Accent="{StaticResource Blueprint}" Unit="°C"/>
                                             <StackPanel Margin="14,0,0,0" VerticalAlignment="Center">
                                                 <TextBlock x:Name="TileGpuName" FontSize="13.5" FontWeight="Bold"/>
                                                 <TextBlock x:Name="TileGpuSub" FontSize="11" Foreground="{StaticResource Txt3}" Margin="0,2,0,0"/>

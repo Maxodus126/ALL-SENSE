@@ -145,6 +145,12 @@ public static class AppUpdate
     /// </summary>
     public static void Install(string zipPath, string exePath)
     {
+        // Guard: hanya izinkan ganti biner AllSense itu sendiri. Kalau app dijalankan
+        // via 'dotnet AllSense.App.dll', ProcessPath menunjuk dotnet.exe — menimpa
+        // itu bakal merusak sistem. Tolak.
+        if (!Path.GetFileName(exePath).Equals("AllSense.App.exe", StringComparison.OrdinalIgnoreCase))
+            throw new InvalidOperationException("Update hanya diizinkan dari biner AllSense.App.exe (jalan kan app dari exe standalone, bukan dotnet dll).");
+
         string dir = Path.Combine(Path.GetTempPath(), "AllSense-update");
         string extract = Path.Combine(dir, "new");
         if (Directory.Exists(extract)) Directory.Delete(extract, true);
