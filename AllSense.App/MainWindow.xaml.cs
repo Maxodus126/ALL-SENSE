@@ -421,8 +421,8 @@ public partial class MainWindow : Window
         ChipSrc.Text = s.Ac == null ? "—" : s.Ac.Value ? "AC" : "Baterai";
 
         // Dashboard gauges — SISTEM/GPU tampilkan SUHU (selaras halaman Cooling); bar = beban.
-        SetGauge(GaugeCpu, (float)PctTemp(s.CpuT), Fmt(s.CpuT));
-        SetGauge(GaugeGpu, (float)PctTemp(s.GpuT), Fmt(s.GpuT));
+        CpuPct.Text = PctText(s.CpuT);
+        GpuPct.Text = PctText(s.GpuT);
         SetGauge(GaugeRam, (float)ramPct, null);
         SetGauge(GaugeBat, s.Bat.ChargePercent ?? 0, null);
         BarCpu.Value = Clamp(s.CpuL);
@@ -446,12 +446,10 @@ public partial class MainWindow : Window
         BTemp.Text = Fmt(s.CpuT) + "°C";
 
         // Cooling page
-        CoolCpu.Value = PctTemp(s.CpuT);
-        CoolCpu.DisplayText = Fmt(s.CpuT);
+        CoolCpuPct.Text = PctText(s.CpuT);
         CoolCpuSub.Text = Fmt(s.CpuT) + "°C · zona ACPI";
         CoolBarCpu.Value = PctTemp(s.CpuT);
-        CoolGpu.Value = PctTemp(s.GpuT);
-        CoolGpu.DisplayText = Fmt(s.GpuT);
+        CoolGpuPct.Text = PctText(s.GpuT);
         CoolGpuSub.Text = Fmt(s.GpuT) + "°C · core";
         CoolBarGpu.Value = PctTemp(s.GpuT);
         FanRpm.Text = Fmt(s.Fan);
@@ -465,7 +463,8 @@ public partial class MainWindow : Window
 
     private static double Clamp(float v) => float.IsNaN(v) ? 0 : Math.Clamp(v, 0, 100);
     private static double Clamp(double v) => double.IsNaN(v) ? 0 : Math.Clamp(v, 0, 100);
-    private static double PctTemp(float t) => float.IsNaN(t) ? 0 : Math.Clamp((t - 40) * 100 / 55, 0, 100);
+    private static double PctTemp(float t) => float.IsNaN(t) ? 0 : Math.Clamp((t - 20) * 100 / 80, 0, 100);
+    private static string PctText(float t) => float.IsNaN(t) ? "—" : Math.Round(PctTemp(t)).ToString("0") + "%";
     private static string Fmt(float f) => float.IsFinite(f) ? Math.Round(f).ToString("0") : "—";
     private static string Fmt(int? n) => n is int v ? v.ToString() : "—";
 

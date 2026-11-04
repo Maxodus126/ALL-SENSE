@@ -6,13 +6,12 @@ using System.Windows.Shapes;
 
 namespace AllSense.App;
 
-/// <summary>Gauge lingkaran statis (tanpa animasi/glow): track Panel2 + busur aksen + nilai/pusat.</summary>
+/// <summary>
+/// Gauge lingkaran responsif: cincin mengikuti ukuran kontrol (80/92/150 dst),
+/// tebal stroke & font disesuaikan otomatis.
+/// </summary>
 public partial class RingGauge : UserControl
 {
-    private const double R = 35;
-    private const double CX = 40;
-    private const double CY = 40;
-
     public RingGauge()
     {
         InitializeComponent();
@@ -63,28 +62,49 @@ public partial class RingGauge : UserControl
     private static void OnChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         => ((RingGauge)d).Redraw();
 
+    protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+    {
+        base.OnRenderSizeChanged(sizeInfo);
+        Redraw();
+    }
+
     private void Redraw()
     {
         if (ProgressPath is null) return;
-        double frac = Math.Clamp(Value, 0, 100) / 100.0;
-        ProgressPath.Stroke = Accent ?? Brushes.Transparent;
-        UnitText.Text = Unit;
-        ValueText.Text = string.IsNullOrEmpty(DisplayText) ? Math.Round(Value).ToString("0") : DisplayText!;
 
+        double w = ActualWidth, h = ActualHeight;
+        if (w <= 0 || h <= 0) return;
+
+        double stroke = Math.Clamp(Math.Min(w, h) * 0.125, 7.0, 15.0);
+        double r = Math.Min(w, h) / 2.0 - stroke / 2.0;
+        double cx = w / 2.0, cy = h / 2.0;
+
+        TrackEllipse.Width = TrackEllipse.Height = r * 2;
+        TrackEllipse.StrokeThickness = stroke;
+
+        ProgressPath.Stroke = Accent ?? Brushes.Transparent;
+        ProgressPath.StrokeThickness = stroke;
+
+        double frac = Math.Clamp(Value, 0, 100) / 100.0;
         if (frac >= 0.999)
         {
-            ProgressPath.Data = new EllipseGeometry(new Point(CX, CY), R, R);
-            return;
+            ProgressPath.Data = new EllipseGeometry(new Point(cx, cy), r, r);
+        }
+        else
+        {
+            double endDeg = -90 + frac * 360.0;
+            double rad = endDeg * Math.PI / 180.0;
+            var start = new Point(cx, cy - r);
+            var end = new Point(cx + r * Math.Cos(rad), cy + r * Math.Sin(rad));
+            bool large = frac > 0.5;
+            var fig = new PathFigure(start,
+                new PathSegment[] { new ArcSegment(end, new Size(r, r), 0, large, SweepDirection.Clockwise, true) },
+                false);
+            ProgressPath.Data = new PathGeometry(new[] { fig });
         }
 
-        double endDeg = -90 + frac * 360.0;
-        double rad = endDeg * Math.PI / 180.0;
-        var start = new Point(CX, CY - R);
-        var end = new Point(CX + R * Math.Cos(rad), CY + R * Math.Sin(rad));
-        bool large = frac > 0.5;
-        var fig = new PathFigure(start,
-            new PathSegment[] { new ArcSegment(end, new Size(R, R), 0, large, SweepDirection.Clockwise, true) },
-            false);
-        ProgressPath.Data = new PathGeometry(new[] { fig });
+        UnitText.Text = Unit;
+        ValueText.Text = string.IsNullOrEmpty(DisplayText) ? Math.Round(Value).ToString("0") : DisplayText!;
+        ValueText.FontSize = Math.Clamp(Math.Min(w, h) * 0.24, 15.0, 32.0);
     }
 }
