@@ -1,28 +1,36 @@
-<meta name="claude:viewport-fit-sides" content="cover">
-<title>AllSense Control</title>
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AllSense Control — Pusat Kendali Laptop Windows</title>
+<meta name="description" content="AllSense Control: universal laptop control center untuk Windows. Power mode AC/DC satu klik, suhu live CPU/GPU/RAM, hotkey global, update otomatis. WPF/.NET 8, tanpa admin.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
-   AllSense Control — landed page
-   Konsep: panel instrumen / ruang kendali. Telemetri gelap,
-   angka monospace, indikator LED, garis halus. Satu tema gelap.
+   AllSense Control — landing page
+   Tema = tema asli aplikasi (App.xaml): navy gelap #070B12,
+   aksen merah #FF2D4D, blueprint cyan #45C8F0, hijau #34C98F.
+   Konsep: panel instrumen / ruang kendali. Satu tema gelap —
+   konsisten dengan tampilan aplikasi.
    ============================================================ */
 :root{
-  --bg:      #060a08;
-  --bg2:     #0b120e;
-  --surface:  #101a14;
-  --surface2: #16231b;
-  --line:    rgba(126, 182, 158, .14);
-  --line2:   rgba(126, 182, 158, .26);
-  --fg:      #dce9e2;
-  --muted:   #87a297;
-  --dim:     #58746a;
-  --green:   #31dd9a;   /* sehat / sensor OK */
-  --cyan:    #3fb8e8;   /* data / polling */
-  --amber:   #f0ab3d;   /* panas / waspada */
-  --red:     #ed5a5a;   /* error / tiada */
+  --bg:       #070B12;   /* Bg aplikasi */
+  --bg2:      #0C121C;   /* Surface */
+  --surface:  #0C121C;
+  --surface2: #111925;   /* Panel */
+  --surface3: #172230;   /* Panel2 */
+  --line:     rgba(34,51,74,.6);   /* Line #22334A */
+  --line2:    #2D3A55;             /* Line2 */
+  --fg:       #EAF0F8;             /* Txt */
+  --muted:    #AEBDD3;             /* Txt2 */
+  --dim:      #6F7F9A;             /* Txt3 */
+  --red:      #FF2D4D;             /* Red — aksen utama */
+  --reddeep:  #D40F2E;             /* RedDeep */
+  --cyan:     #45C8F0;             /* Blueprint */
+  --green:    #34C98F;             /* Green */
   --display: "Chakra Petch", "Segoe UI", system-ui, sans-serif;
   --body:    "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
   --mono:    "IBM Plex Mono", "Consolas", monospace;
@@ -38,17 +46,19 @@ body{
   padding-block:0;
   overflow-x:hidden;
 }
-::selection{background:rgba(49,221,154,.25)}
+::selection{background:rgba(255,45,77,.3)}
 a{color:inherit; text-decoration:none}
 .wrap{max-width:1100px; margin-inline:auto}
 .pad{padding-block:72px}
 .hairline{border-top:1px solid var(--line)}
+img{max-width:100%; display:block}
 
-/* ---------- latar: glow + grid + noise ---------- */
+/* ---------- latar: glow merah + grid + noise ---------- */
 .bgfx{position:fixed; inset:0; z-index:-1; pointer-events:none;
   background:
-    radial-gradient(900px 520px at 75% -10%, rgba(49,221,154,.08), transparent 60%),
-    radial-gradient(700px 460px at -8% 30%, rgba(63,184,232,.06), transparent 60%);
+    radial-gradient(900px 520px at 75% -10%, rgba(255,45,77,.10), transparent 60%),
+    radial-gradient(700px 460px at -8% 30%, rgba(69,200,240,.06), transparent 60%),
+    linear-gradient(180deg, #0F1723 0%, var(--bg) 30%);
 }
 .bgfx::after{content:""; position:absolute; inset:0; opacity:.5;
   background-image:
@@ -80,112 +90,118 @@ a{color:inherit; text-decoration:none}
 .btn{display:inline-flex; align-items:center; gap:8px; cursor:pointer;
   border:1px solid var(--line2); border-radius:6px;
   padding:11px 18px; font-family:var(--display); font-weight:600; font-size:14px; letter-spacing:.03em;
-  color:var(--fg); background:var(--surface); transition:transform .12s, border-color .15s, background .15s}
-.btn:hover{border-color:var(--green); background:var(--surface2)}
+  color:var(--fg); background:var(--surface2); transition:transform .12s, border-color .15s, background .15s}
+.btn:hover{border-color:var(--red); background:var(--surface3)}
 .btn:active{transform:translateY(1px)}
-.btn.primary{background:var(--green); border-color:var(--green); color:#04231a; box-shadow:0 0 0 1px rgba(49,221,154,.25), 0 6px 24px -8px rgba(49,221,154,.5)}
-.btn.primary:hover{background:#4be6aa}
-.btn .d{font-family:var(--mono); font-weight:500; font-size:11px; color:inherit; opacity:.65}
+.btn.primary{background:linear-gradient(180deg, var(--red), var(--reddeep)); border-color:var(--red); color:#fff; box-shadow:0 0 0 1px rgba(255,45,77,.25), 0 6px 24px -8px rgba(255,45,77,.55)}
+.btn.primary:hover{background:linear-gradient(180deg, #ff4461, var(--red))}
+.btn .d{font-family:var(--mono); font-weight:500; font-size:11px; color:inherit; opacity:.7}
 
 /* ---------- hero ---------- */
 .hero{padding-block:64px 56px}
-.hero .wrap{display:grid; grid-template-columns:1.06fr .94fr; gap:48px; align-items:center}
-.eyebrow{display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--cyan); margin-bottom:18px}
-.eyebrow::before{content:""; width:7px; height:7px; background:var(--cyan); box-shadow:0 0 0 3px rgba(63,184,232,.2); animation:blink 2.4s infinite}
+.hero .wrap{display:grid; grid-template-columns:1.02fr .98fr; gap:44px; align-items:center}
+.eyebrow{display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--red); margin-bottom:18px}
+.eyebrow::before{content:""; width:7px; height:7px; background:var(--red); box-shadow:0 0 0 3px rgba(255,45,77,.2); animation:blink 2.4s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
 .hero h1{font-family:var(--display); font-weight:700; font-size:clamp(38px, 5.2vw, 60px); line-height:1.02; letter-spacing:-.01em; text-wrap:balance}
-.hero h1 .gr{color:var(--green); position:relative; white-space:nowrap}
-.hero h1 .gr::after{content:""; position:absolute; left:0; right:0; bottom:-4px; height:3px; background:linear-gradient(90deg, var(--green), transparent)}
+.hero h1 .rd{color:var(--red); position:relative; white-space:nowrap}
+.hero h1 .rd::after{content:""; position:absolute; left:0; right:0; bottom:-4px; height:3px; background:linear-gradient(90deg, var(--red), transparent)}
 .sub{color:var(--muted); font-size:17px; max-width:34em; margin-top:20px}
 .heroacts{display:flex; flex-wrap:wrap; gap:12px; margin-top:28px; align-items:center}
 .req{display:flex; flex-wrap:wrap; gap:8px; margin-top:26px}
 .req span{font-family:var(--mono); font-size:11px; letter-spacing:.05em; color:var(--muted); border:1px solid var(--line); border-radius:20px; padding:5px 12px}
 
-/* ---------- panel mockup ---------- */
-.panel{background:linear-gradient(180deg, var(--surface2), var(--surface)); border:1px solid var(--line2); border-radius:12px; box-shadow:0 30px 70px -30px rgba(0,0,0,.8), 0 0 0 1px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.04)}
-.pwin{display:flex; align-items:center; gap:8px; padding:12px 16px; border-bottom:1px solid var(--line)}
-.pwin .dot{width:10px; height:10px; border-radius:50%}
-.pwin .dot:nth-child(1){background:#ed5a5a}
-.pwin .dot:nth-child(2){background:#f0ab3d}
-.pwin .dot:nth-child(3){background:#31dd9a}
-.pwin .ttl{font-family:var(--mono); font-size:11px; color:var(--muted); margin-left:8px; letter-spacing:.04em}
-.pwin .live{margin-left:auto; display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:10px; color:var(--green); letter-spacing:.12em; text-transform:uppercase}
-.pwin .live::before{content:""; width:6px; height:6px; border-radius:50%; background:var(--green); animation:blink 1.6s infinite}
-.pbody{padding:20px}
-.psec{font-family:var(--mono); font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--dim); margin:16px 0 10px; display:flex; align-items:center; gap:8px}
-.psec:first-child{margin-top:0}
-.psec::after{content:""; flex:1; height:1px; background:var(--line)}
-.pmode{display:grid; grid-template-columns:1fr 1fr; gap:12px}
-.pcard{border:1px solid var(--line); border-radius:8px; padding:14px}
-.pcard .lbl{font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--dim); margin-bottom:10px; display:flex; justify-content:space-between}
-.pcard .lbl b{color:var(--cyan); font-weight:500}
-.seg{display:flex; border:1px solid var(--line2); border-radius:6px; overflow:hidden}
-.seg button{flex:1; border:0; background:transparent; color:var(--muted); font-family:var(--display); font-weight:600; font-size:12px; padding:8px 4px; cursor:pointer; border-right:1px solid var(--line); transition:background .12s, color .12s}
-.seg button:last-child{border-right:0}
-.seg button:hover{color:var(--fg)}
-.seg button.on{background:var(--green); color:#04231a}
-.pcard .cur{font-family:var(--mono); font-size:11px; color:var(--muted); margin-top:10px}
-.pcard .cur b{color:var(--green); font-weight:500}
-.sensors{display:grid; gap:14px}
-.srow{display:grid; grid-template-columns:118px 1fr 70px; gap:12px; align-items:center}
-.sname .t{font-family:var(--display); font-weight:600; font-size:13px}
-.sname .c{font-family:var(--mono); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); margin-top:1px}
-.sbar{height:9px; border-radius:5px; background:rgba(255,255,255,.05); border:1px solid var(--line); overflow:hidden}
-.sbar i{display:block; height:100%; border-radius:4px; width:0; transition:width .9s cubic-bezier(.25,.8,.3,1)}
-.sbar i.ok{background:linear-gradient(90deg, #1f9e6c, var(--green))}
-.sbar i.hot{background:linear-gradient(90deg, var(--amber), #ff7a3d)}
-.sval{font-family:var(--mono); font-size:15px; font-weight:500; text-align:right; font-variant-numeric:tabular-nums}
-.sval small{color:var(--dim); font-size:10px; margin-left:2px}
-.pfoot{display:flex; flex-wrap:wrap; gap:8px; margin-top:18px; padding-top:16px; border-top:1px solid var(--line)}
-.chip{font-family:var(--mono); font-size:10.5px; letter-spacing:.04em; color:var(--muted); border:1px solid var(--line); border-radius:20px; padding:5px 11px}
-.chip b{color:var(--green); font-weight:500}
-.chip.cy b{color:var(--cyan)}
+/* ---------- frame screenshot asli ---------- */
+.shot{border:1px solid var(--line2); border-radius:12px; overflow:hidden;
+  box-shadow:0 30px 70px -30px rgba(0,0,0,.85), 0 0 0 1px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.04), 0 0 60px -20px rgba(255,45,77,.18)}
+.shot .pwin{display:flex; align-items:center; gap:8px; padding:10px 14px; border-bottom:1px solid var(--line); background:var(--surface3)}
+.shot .pwin .dot{width:10px; height:10px; border-radius:50%}
+.shot .pwin .dot:nth-child(1){background:var(--red)}
+.shot .pwin .dot:nth-child(2){background:#f0ab3d}
+.shot .pwin .dot:nth-child(3){background:var(--green)}
+.shot .pwin .ttl{font-family:var(--mono); font-size:11px; color:var(--muted); margin-left:8px; letter-spacing:.04em}
+.shot .pwin .live{margin-left:auto; display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:10px; color:var(--red); letter-spacing:.12em; text-transform:uppercase}
+.shot .pwin .live::before{content:""; width:6px; height:6px; border-radius:50%; background:var(--red); animation:blink 1.6s infinite}
+.shot img{width:100%; display:block}
+.shotcap{font-family:var(--mono); font-size:10.5px; color:var(--dim); letter-spacing:.08em; text-transform:uppercase; margin-top:10px; text-align:center}
 
 /* ---------- section head ---------- */
-.sec-eyebrow{display:flex; align-items:center; gap:10px; font-family:var(--mono); font-size:11.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--green); margin-bottom:10px}
-.sec-eyebrow .sq{width:8px; height:8px; background:var(--green); transform:rotate(45deg)}
+.sec-eyebrow{display:flex; align-items:center; gap:10px; font-family:var(--mono); font-size:11.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--red); margin-bottom:10px}
+.sec-eyebrow .sq{width:8px; height:8px; background:var(--red); transform:rotate(45deg)}
 .sec-title{font-family:var(--display); font-weight:700; font-size:clamp(26px,3.4vw,38px); letter-spacing:-.01em; line-height:1.12; text-wrap:balance}
-.sec-sub{color:var(--muted); max-width:44em; margin-top:12px}
+.sec-sub{color:var(--muted); max-width:46em; margin-top:12px}
+
+/* ---------- galeri halaman ---------- */
+.gal{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:34px}
+.gcard{border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--surface); transition:border-color .15s, transform .15s}
+.gcard:hover{border-color:var(--red); transform:translateY(-2px)}
+.gcard img{width:100%; aspect-ratio:1180/780; object-fit:cover; object-position:top left; border-bottom:1px solid var(--line)}
+.gcard .gt{padding:14px 16px}
+.gcard .gt b{font-family:var(--display); font-weight:600; font-size:14px; display:block}
+.gcard .gt span{font-family:var(--mono); font-size:11px; color:var(--dim); display:block; margin-top:4px; line-height:1.5}
+
+/* ---------- demo interaktif ---------- */
+.demobar{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:34px; padding:12px 16px;
+  border:1px solid var(--line2); border-radius:10px 10px 0 0; border-bottom:none; background:var(--surface2)}
+.demobar .dlab{font-family:var(--mono); font-size:11.5px; letter-spacing:.06em; color:var(--muted); display:flex; align-items:center; gap:9px}
+.demobar .dlab .sq{width:8px; height:8px; background:var(--red); transform:rotate(45deg); flex:none; animation:blink 2.4s infinite}
+.demobar .dopen{margin-left:auto; font-family:var(--mono); font-size:11.5px; color:var(--red); border:1px solid var(--line2); border-radius:6px; padding:6px 12px; transition:border-color .15s, background .15s}
+.demobar .dopen:hover{border-color:var(--red); background:rgba(255,45,77,.08)}
+.demoframe{border:1px solid var(--line2); border-radius:0 0 10px 10px; overflow:hidden; background:var(--bg);
+  box-shadow:0 26px 60px -30px rgba(0,0,0,.8), 0 0 50px -20px rgba(255,45,77,.15)}
+.demoframe iframe{display:block; width:100%; height:720px; border:0; background:var(--bg)}
+@media (max-width:900px){ .demoframe iframe{height:640px} }
+@media (max-width:560px){ .demoframe iframe{height:560px} }
 
 /* ---------- fitur inti ---------- */
 .grid4{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:34px}
-.fcard{border:1px solid var(--line); border-radius:10px; padding:20px 18px; background:linear-gradient(180deg, var(--surface), transparent); position:relative; transition:border-color .15s, transform .15s}
+.fcard{border:1px solid var(--line); border-radius:10px; padding:20px 18px; background:linear-gradient(180deg, var(--surface2), transparent); position:relative; transition:border-color .15s, transform .15s}
 .fcard:hover{border-color:var(--line2); transform:translateY(-2px)}
 .fnum{font-family:var(--mono); font-size:10.5px; color:var(--dim); letter-spacing:.1em; margin-bottom:14px}
-.ficon{width:38px; height:38px; border-radius:8px; border:1px solid var(--line2); display:grid; place-items:center; margin-bottom:14px; background:var(--surface2)}
-.ficon svg{width:20px; height:20px; stroke:var(--green)}
+.ficon{width:38px; height:38px; border-radius:8px; display:grid; place-items:center; margin-bottom:14px; background:var(--surface3)}
+.ficon svg{width:20px; height:20px; stroke:var(--red)}
+.ficon.cy svg{stroke:var(--cyan)}
+.ficon.gn svg{stroke:var(--green)}
 .fcard h3{font-family:var(--display); font-weight:600; font-size:15.5px; margin-bottom:8px}
 .fcard p{color:var(--muted); font-size:13.5px}
 
+/* ---------- navigasi sidebar (cermin aplikasi) ---------- */
+.navmap{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:34px}
+.navcol{border:1px solid var(--line); border-radius:10px; padding:18px; background:var(--surface)}
+.navcol .grp{font-family:var(--mono); font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--dim); margin-bottom:12px}
+.navcol ul{list-style:none; display:grid; gap:6px}
+.navcol li{display:flex; align-items:baseline; gap:10px; font-family:var(--display); font-weight:600; font-size:13.5px}
+.navcol li small{font-family:var(--body); font-weight:400; font-size:11.5px; color:var(--dim)}
+
 /* ---------- fitur lengkap ---------- */
 .gridblocks{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:34px}
-.block{border:1px solid var(--line); border-left:3px solid var(--green); border-radius:10px; padding:22px 20px; background:var(--surface)}
+.block{border:1px solid var(--line); border-left:3px solid var(--red); border-radius:10px; padding:22px 20px; background:var(--surface)}
 .block .bt{display:flex; align-items:center; gap:10px; font-family:var(--display); font-weight:600; font-size:15.5px; margin-bottom:8px}
 .block .bt .m{font-family:var(--mono); font-size:10.5px; color:var(--dim); letter-spacing:.1em}
 .block p{color:var(--muted); font-size:13.5px}
-.block code{font-family:var(--mono); font-size:11.5px; color:var(--cyan); background:rgba(63,184,232,.08); padding:1px 5px; border-radius:4px}
+.block code{font-family:var(--mono); font-size:11.5px; color:var(--cyan); background:rgba(69,200,240,.08); padding:1px 5px; border-radius:4px}
 
 /* ---------- status ---------- */
 .statusgrid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:34px}
 .st{border:1px solid var(--line); border-radius:10px; padding:20px; display:flex; gap:16px; align-items:flex-start; background:var(--surface)}
 .led{width:12px; height:12px; border-radius:50%; flex:none; margin-top:5px}
-.led.g{background:var(--green); box-shadow:0 0 0 4px rgba(49,221,154,.15), 0 0 18px rgba(49,221,154,.5)}
-.led.y{background:var(--amber); box-shadow:0 0 0 4px rgba(240,171,61,.15), 0 0 18px rgba(240,171,61,.5)}
-.led.r{background:var(--red); box-shadow:0 0 0 4px rgba(237,90,90,.15), 0 0 18px rgba(237,90,90,.5)}
-.led.c{background:var(--cyan); box-shadow:0 0 0 4px rgba(63,184,232,.15)}
+.led.g{background:var(--green); box-shadow:0 0 0 4px rgba(52,201,143,.15), 0 0 18px rgba(52,201,143,.5)}
+.led.y{background:#f0ab3d; box-shadow:0 0 0 4px rgba(240,171,61,.15), 0 0 18px rgba(240,171,61,.5)}
+.led.r{background:var(--red); box-shadow:0 0 0 4px rgba(255,45,77,.15), 0 0 18px rgba(255,45,77,.5)}
+.led.c{background:var(--cyan); box-shadow:0 0 0 4px rgba(69,200,240,.15)}
 .st h4{font-family:var(--display); font-weight:600; font-size:14.5px; margin-bottom:5px}
 .st p{color:var(--muted); font-size:13px}
 .st .tag{font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; display:inline-block; margin-bottom:8px; padding:3px 8px; border-radius:4px}
-.st .tag.g{color:var(--green); background:rgba(49,221,154,.1)}
-.st .tag.y{color:var(--amber); background:rgba(240,171,61,.1)}
-.st .tag.r{color:var(--red); background:rgba(237,90,90,.1)}
-.st .tag.c{color:var(--cyan); background:rgba(63,184,232,.1)}
+.st .tag.g{color:var(--green); background:rgba(52,201,143,.1)}
+.st .tag.y{color:#f0ab3d; background:rgba(240,171,61,.1)}
+.st .tag.r{color:var(--red); background:rgba(255,45,77,.1)}
+.st .tag.c{color:var(--cyan); background:rgba(69,200,240,.1)}
 
 /* ---------- unduh ---------- */
-.dl{border:1px solid var(--line2); border-radius:12px; padding:26px; background:linear-gradient(180deg, var(--surface2), var(--surface)); margin-top:34px; display:grid; grid-template-columns:1fr auto; gap:20px; align-items:center}
+.dl{border:1px solid var(--line2); border-radius:12px; padding:26px; background:linear-gradient(180deg, var(--surface3), var(--surface)); margin-top:34px; display:grid; grid-template-columns:1fr auto; gap:20px; align-items:center}
 .dl .dnum{font-family:var(--mono); font-size:10.5px; color:var(--dim); letter-spacing:.14em; text-transform:uppercase; margin-bottom:8px}
 .dl h3{font-family:var(--display); font-weight:700; font-size:20px}
-.dl .pick{font-family:var(--mono); font-size:11px; color:var(--green); letter-spacing:.06em; margin-top:4px}
+.dl .pick{font-family:var(--mono); font-size:11px; color:var(--red); letter-spacing:.06em; margin-top:4px}
 .dl .meta{font-family:var(--mono); font-size:11.5px; color:var(--muted); margin-top:10px; display:flex; flex-wrap:wrap; gap:6px 16px}
 .dl .meta b{color:var(--fg); font-weight:500}
 .dl .rowm{margin-top:14px; display:flex; flex-wrap:wrap; gap:8px}
@@ -197,26 +213,23 @@ a{color:inherit; text-decoration:none}
 .ft .wrap{display:flex; flex-wrap:wrap; gap:14px; align-items:center; color:var(--dim); font-family:var(--mono); font-size:11.5px}
 .ft .r{margin-left:auto; display:flex; gap:18px}
 .ft a{color:var(--muted); transition:color .15s}
-.ft a:hover{color:var(--green)}
+.ft a:hover{color:var(--red)}
 
-@media (max-width:920px){
+@media (max-width:900px){
   .hero .wrap{grid-template-columns:1fr; gap:36px}
   .grid4{grid-template-columns:1fr 1fr}
   .gridblocks,.statusgrid{grid-template-columns:1fr}
+  .gal{grid-template-columns:1fr 1fr}
+  .navmap{grid-template-columns:1fr}
   .dl{grid-template-columns:1fr}
 }
 @media (max-width:560px){
-  .grid4{grid-template-columns:1fr}
-  .pad{padding-block:52px}
-  .nav a{display:none}
-  .nav a.cta{display:inline-flex}
-  .srow{grid-template-columns:104px 1fr 62px}
-}
-@media (prefers-reduced-motion: reduce){
-  html{scroll-behavior:auto}
-  *,*::before,*::after{transition:none!important; animation:none!important}
+  .grid4,.gal{grid-template-columns:1fr}
+  .nav{display:none}
 }
 </style>
+</head>
+<body>
 
 <div class="bgfx"></div>
 
@@ -226,16 +239,17 @@ a{color:inherit; text-decoration:none}
     <div class="brand">
       <span class="mark">
         <svg viewBox="0 0 26 26" fill="none">
-          <circle cx="13" cy="13" r="10" stroke="rgba(126,182,158,.35)" stroke-width="2.4"/>
-          <path d="M13 13 L19 9" stroke="#31dd9a" stroke-width="2.4" stroke-linecap="round"/>
-          <circle cx="13" cy="13" r="2.6" fill="#31dd9a"/>
-          <circle cx="19" cy="9" r="1.8" fill="#3fb8e8"/>
+          <circle cx="13" cy="13" r="10" stroke="rgba(45,58,85,.9)" stroke-width="2.4"/>
+          <path d="M13 13 L19 9" stroke="#FF2D4D" stroke-width="2.4" stroke-linecap="round"/>
+          <circle cx="13" cy="13" r="2.6" fill="#FF2D4D"/>
+          <circle cx="19" cy="9" r="1.8" fill="#45C8F0"/>
         </svg>
       </span>
       AllSense<span class="tag">Control</span>
     </div>
     <nav class="nav">
-      <a href="#app">Aplikasi</a>
+      <a href="#tampilan">Tampilan</a>
+      <a href="#halaman">Halaman</a>
       <a href="#fitur">Fitur</a>
       <a href="#status">Status</a>
       <a href="#unduh" class="cta btn primary" style="padding:8px 16px;font-size:13px">Unduh</a>
@@ -248,11 +262,11 @@ a{color:inherit; text-decoration:none}
   <div class="wrap">
     <div>
       <div class="eyebrow">v1.2.0 · rilis stabil</div>
-      <h1>Pusat kendali<br><span class="gr">laptop</span> dalam satu klik.</h1>
-      <p class="sub">Satu tombol mengganti mode daya AC/DC — Efficiency, Balanced, Performance. Sambil itu, suhu CPU, GPU, dan RAM terbaca langsung. Tanpa admin, tanpa driver ring0, tanpa ribet.</p>
+      <h1>Pusat kendali<br><span class="rd">laptop</span> dalam satu klik.</h1>
+      <p class="sub">Satu tombol mengganti mode daya AC/DC — Efisiensi, Balanced, Performance. Sambil itu, suhu sistem (ACPI), GPU core, dan beban RAM terbaca langsung. Tanpa admin, tanpa driver ring0, tanpa ribet.</p>
       <div class="heroacts">
-        <a class="btn primary" href="#unduh">Unduh Instaler <span class="d">AllSense-Setup.exe</span></a>
-        <a class="btn" href="#unduh">Portabel <span class="d">· 65 MB</span></a>
+        <a class="btn primary" href="https://github.com/Maxodus126/ALL-SENSE/releases/latest/download/AllSense-Setup.exe">Unduh Instaler <span class="d">AllSense-Setup.exe</span></a>
+        <a class="btn" href="https://github.com/Maxodus126/ALL-SENSE/releases/latest/download/AllSense-Setup.zip">Unduh Zip</a>
       </div>
       <div class="req">
         <span>Windows 10/11 x64</span>
@@ -262,62 +276,71 @@ a{color:inherit; text-decoration:none}
       </div>
     </div>
 
-    <!-- mockup aplikasi -->
-    <div class="panel">
-      <div class="pwin">
-        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-        <span class="ttl">AllSense Control — v1.2.0</span>
-        <span class="live">Live</span>
+    <!-- screenshot ASLI aplikasi yang berjalan -->
+    <div>
+      <div class="shot">
+        <div class="pwin">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <span class="ttl">AllSense Control — v1.2.0</span>
+          <span class="live">Live</span>
+        </div>
+        <img src="appshot.png" alt="Tangkapan layar asli dashboard AllSense Control: sidebar navigasi, kartu perangkat Nitro NL16-71G, status mode Efisiensi AC &amp; DC, pemantauan suhu sistem 28°C (ACPI), GPU 53°C core, RAM 82%, dan kartu Power Mode." width="1180" height="780">
       </div>
-      <div class="pbody">
-        <div class="psec">Mode Daya · AC / DC</div>
-        <div class="pmode">
-          <div class="pcard">
-            <div class="lbl">AC <b>colokan</b></div>
-            <div class="seg"><button>Efficiency</button><button class="on">Balanced</button><button>Performance</button></div>
-          </div>
-          <div class="pcard">
-            <div class="lbl">DC <b>baterai</b></div>
-            <div class="seg"><button class="on">Efficiency</button><button>Balanced</button><button>Performance</button></div>
-          </div>
-        </div>
-
-        <div class="psec">Suhu &amp; Beban · Live</div>
-        <div class="sensors">
-          <div class="srow">
-            <div class="sname"><div class="t">CPU</div><div class="c">sistem · ACPI</div></div>
-            <div class="sbar"><i class="ok" id="cpuBar"></i></div>
-            <div class="sval" id="cpuVal">28.4<small>°C</small></div>
-          </div>
-          <div class="srow">
-            <div class="sname"><div class="t">GPU</div><div class="c">inti · core</div></div>
-            <div class="sbar"><i class="ok" id="gpuBar"></i></div>
-            <div class="sval" id="gpuVal">54.0<small>°C</small></div>
-          </div>
-          <div class="srow">
-            <div class="sname"><div class="t">RAM</div><div class="c">beban</div></div>
-            <div class="sbar"><i class="ok" id="ramBar"></i></div>
-            <div class="sval" id="ramVal">46<small>%</small></div>
-          </div>
-        </div>
-
-        <div class="pfoot">
-          <span class="chip"><b>WMI</b> OK</span>
-          <span class="chip cy">Hotkey <b>Ctrl+Alt+A</b></span>
-          <span class="chip">Polling <b>aktif</b></span>
-          <span class="chip">Selftest <b>lolos</b></span>
-        </div>
-      </div>
+      <div class="shotcap">Tangkapan layar asli — aplikasi berjalan di Nitro NL16-71G</div>
     </div>
   </div>
 </section>
 
-<!-- ======================= aplikasi ======================= -->
-<section class="pad" id="app">
+<!-- ======================= tampilan ======================= -->
+<section class="pad hairline" id="tampilan">
   <div class="wrap">
-    <div class="sec-eyebrow"><span class="sq"></span> Aplikasi</div>
-    <h2 class="sec-title">Di layar: empat hal yang kamu pedulikan.</h2>
-    <p class="sec-sub">AllSense tidak meminta hak admin dan tidak menyentuh inti CPU. Semua bacaan lewat WMI native — jujur, ringan, dan tidak membekukan layar saat pembacaan berjalan.</p>
+    <div class="sec-eyebrow"><span class="sq"></span> Di layar</div>
+    <h2 class="sec-title">Navy gelap, aksen merah — persis aplikasinya.</h2>
+    <p class="sec-sub">Tema situs ini adalah tema aplikasi: latar <code style="font-family:var(--mono);color:var(--cyan)">#070B12</code>, panel <code style="font-family:var(--mono);color:var(--cyan)">#111925</code>, merah <code style="font-family:var(--mono);color:var(--red)">#FF2D4D</code> untuk daya &amp; status, biru <code style="font-family:var(--mono);color:var(--cyan)">#45C8F0</code> untuk data, hijau <code style="font-family:var(--mono);color:var(--green)">#34C98F</code> untuk kondisi sehat. Native WPF — tanpa WebView2, hemat memori.</p>
+  </div>
+</section>
+
+<!-- ======================= halaman aplikasi ======================= -->
+<section class="pad hairline" id="halaman">
+  <div class="wrap">
+    <div class="sec-eyebrow"><span class="sq"></span> Halaman</div>
+    <h2 class="sec-title">Sembilan halaman, satu sidebar.</h2>
+    <p class="sec-sub">Navigasi mengikuti struktur aplikasi: UTAMA untuk kendali, SISTEM untuk informasi perangkat, LAINNYA untuk konfigurasi.</p>
+    <div class="navmap">
+      <div class="navcol">
+        <div class="grp">Utama</div>
+        <ul>
+          <li>Dashboard <small>ringkasan sensor + mode</small></li>
+          <li>Power Center <small>mode AC/DC, terapkan</small></li>
+          <li>Cooling <small>grid suhu 2×2</small></li>
+          <li>Battery <small>level &amp; status daya</small></li>
+        </ul>
+      </div>
+      <div class="navcol">
+        <div class="grp">Sistem</div>
+        <ul>
+          <li>My Laptop <small>CPU · GPU · RAM</small></li>
+          <li>Storage <small>volume &amp; pemakaian</small></li>
+          <li>Gaming Hub <small>profil performa</small></li>
+        </ul>
+      </div>
+      <div class="navcol">
+        <div class="grp">Lainnya</div>
+        <ul>
+          <li>Settings <small>hotkey, repo, polling</small></li>
+          <li>About <small>versi &amp; lisensi</small></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Demo interaktif live (design asli aplikasi, 9 halaman bisa diklik) -->
+    <div class="demobar">
+      <span class="dlab"><span class="sq"></span> Demo interaktif — klik sidebar-nya, halaman bisa dipindah</span>
+      <a class="dopen" href="demo.html" target="_blank" rel="noopener">Buka layar penuh ↗</a>
+    </div>
+    <div class="demoframe">
+      <iframe src="demo.html" title="Demo interaktif AllSense Control — tampilan dan seluruh fitur aplikasi" loading="lazy"></iframe>
+    </div>
   </div>
 </section>
 
@@ -331,25 +354,25 @@ a{color:inherit; text-decoration:none}
         <div class="fnum">01</div>
         <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg></div>
         <h3>Mode Daya AC/DC</h3>
-        <p>Ganti <b>Efficiency / Balanced / Performance</b> dalam satu klik — terpisah untuk colokan dan baterai.</p>
+        <p>Ganti <b>Efisiensi / Balanced / Performance</b> dalam satu klik — terpisah untuk colokan dan baterai, tersimpan di profil Windows.</p>
       </div>
       <div class="fcard">
         <div class="fnum">02</div>
-        <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 1 6 6c0 4-6 9-6 9s-6-5-6-9a6 6 0 0 1 6-6z"/><circle cx="12" cy="9" r="2"/></svg></div>
+        <div class="ficon cy"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 1 6 6c0 4-6 9-6 9s-6-5-6-9a6 6 0 0 1 6-6z"/><circle cx="12" cy="9" r="2"/></svg></div>
         <h3>Suhu Live</h3>
-        <p>CPU (sistem ACPI), GPU (inti core), dan beban RAM — terpolling di thread belakang, UI tetap halus.</p>
+        <p>Sistem (zona termal ACPI), GPU (sensor <b>core</b>), dan beban RAM — terpolling tiap 5 detik di thread belakang, UI tetap halus.</p>
       </div>
       <div class="fcard">
         <div class="fnum">03</div>
-        <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h10M7 13h6"/></svg></div>
+        <div class="ficon gn"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h10M7 13h6"/></svg></div>
         <h3>Hotkey Global</h3>
-        <p>Ctrl+Alt+A memunculkan jendela dari mana pun — bisa di-custom di Settings, dengan rollback bila bentrok.</p>
+        <p>Ctrl+Alt+A memunculkan jendela dari mana pun — bisa di-custom di Settings, dengan rollback otomatis bila bentrok.</p>
       </div>
       <div class="fcard">
         <div class="fnum">04</div>
         <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div>
         <h3>Ringan &amp; Tanpa Admin</h3>
-        <p>±200 MB WS, tanpa WebView2, tanpa UAC. Jalankan langsung — tidak perlu izin atau instalasi sistem.</p>
+        <p>±200 MB RAM, native WPF tanpa WebView2, tanpa UAC. Jalankan langsung — tidak perlu izin atau instalasi sistem.</p>
       </div>
     </div>
   </div>
@@ -358,12 +381,12 @@ a{color:inherit; text-decoration:none}
 <!-- ======================= fitur lengkap ======================= -->
 <section class="pad hairline">
   <div class="wrap">
-    <div class="sec-eyebrow"><span class="sq"></span> Fitur lengkap</div>
+    <div class="sec-eyebrow"><span class="sq"></span> Detail teknis</div>
     <h2 class="sec-title">Detail yang kejujurannya dijaga.</h2>
     <div class="gridblocks">
       <div class="block">
         <div class="bt"><span class="m">A</span> Pembacaan jujur</div>
-        <p>Suhu CPU diambil dari <code>zona termal ACPI</code> (~28°C idle), bukan dari core MSR yang butuh driver ring0. GPU membaca <code>sensor inti</code>, bukan <code>Hot Spot</code>/<code>Memory Junction</code> yang jauh lebih panas dan tidak dibandingkan dengan Task Manager.</p>
+        <p>Suhu sistem diambil dari <code>zona termal ACPI</code> (~28°C idle), bukan core MSR yang butuh driver ring0. GPU membaca <code>sensor inti (core)</code>, bukan <code>Hot Spot</code>/<code>Memory Junction</code> yang jauh lebih panas dan tidak dibandingkan dengan Task Manager.</p>
       </div>
       <div class="block">
         <div class="bt"><span class="m">B</span> Guard pengaman bacaan</div>
@@ -375,15 +398,15 @@ a{color:inherit; text-decoration:none}
       </div>
       <div class="block">
         <div class="bt"><span class="m">D</span> Selftest built-in</div>
-        <p><code>--selftest</code> memverifikasi WMI, mode daya, sensor, dan roundtrip — exit 0 berarti lolos. Semua uji hijau: power, cpu_sensor, gpu_sensor, memory, hotkey, update_tagparse.</p>
+        <p><code>--selftest</code> memverifikasi WMI, mode daya, sensor, dan roundtrip — exit 0 berarti lolos. Semua uji hijau: power, cpu_sensor, gpu_sensor, memory, storage, hotkey, update_tagparse.</p>
       </div>
       <div class="block">
         <div class="bt"><span class="m">E</span> Crash log</div>
-        <p>Error yang tidak tertangkap ditulis ke <code>%TEMP%\AllSense-selftest\crash.log</code>, dengan dark title bar dan manajemen awal yang sudah dibetulkan.</p>
+        <p>Error yang tidak tertangkap ditulis ke <code>%TEMP%\AllSense-selftest\crash.log</code>, dengan dark title bar dan manajemen startup yang sudah teruji.</p>
       </div>
       <div class="block">
-        <div class="bt"><span class="m">F</span> Cooling grid responsif</div>
-        <p>Halaman Cooling memakai grid 2×2 + <code>ColumnDefinitions (*,Auto)</code> — label dan nilai tidak pernah bertumpuk, tidak terpotong di layar &lt;1180px.</p>
+        <div class="bt"><span class="m">F</span> Polling thread belakang</div>
+        <p>Pembacaan WMI berjalan di <code>Task.Run</code> dengan guard anti-tumpang-tindih; UI diperbarui via dispatcher. Layar tidak pernah membeku walau WMI lambat.</p>
       </div>
     </div>
   </div>
@@ -400,7 +423,7 @@ a{color:inherit; text-decoration:none}
         <div>
           <span class="tag g">Sehat</span>
           <h4>Sensor terbaca, suhu normal</h4>
-          <p>WMI merespons, zona termal ada, GPU core terbaca. Status hijau dengan angka live.</p>
+          <p>WMI merespons, zona termal ada, GPU core terbaca. Status hijau dengan angka live tiap 5 detik.</p>
         </div>
       </div>
       <div class="st">
@@ -408,7 +431,7 @@ a{color:inherit; text-decoration:none}
         <div>
           <span class="tag y">Panas</span>
           <h4>Melebihi ambang aman</h4>
-          <p>Bacaan menembus ambang (mis. GPU core &gt; batas). AllSense menyorot sensor yang panas, bukan menghiburmu.</p>
+          <p>Bacaan menembus ambang (mis. GPU core &gt; 80°C). AllSense menyorot sensor yang panas, bukan menghiburmu.</p>
         </div>
       </div>
       <div class="st">
@@ -441,8 +464,8 @@ a{color:inherit; text-decoration:none}
       <div>
         <div class="dnum">Instaler · Direkomendasikan</div>
         <h3>AllSense-Setup.exe</h3>
-        <div class="pick">296 MB · self-contained · per-user, tanpa admin</div>
-        <div class="meta"><span>File: <b>AllSense-Setup.exe</b></span><span>Zip: <b>119 MB</b></span><span>Versi: <b>v1.2.0</b></span></div>
+        <div class="pick">self-contained · per-user, tanpa admin</div>
+        <div class="meta"><span>Versi: <b>v1.2.0</b></span><span>Platform: <b>Windows x64</b></span></div>
         <div class="rowm">
           <a class="btn primary" href="https://github.com/Maxodus126/ALL-SENSE/releases/latest/download/AllSense-Setup.exe">Unduh Instaler</a>
           <a class="btn" href="https://github.com/Maxodus126/ALL-SENSE/releases/latest/download/AllSense-Setup.zip">Unduh Zip</a>
@@ -451,7 +474,7 @@ a{color:inherit; text-decoration:none}
       <div class="dlwhere">
         <div class="dnum">Portabel</div>
         <h3>AllSense-v1.0-x64.zip</h3>
-        <div class="pick">65 MB · ekstrak, jalankan, selesai</div>
+        <div class="pick">ekstrak, jalankan, selesai</div>
         <div class="meta"><span>File: <b>AllSense-v1.0-x64.zip</b></span></div>
         <div class="rowm">
           <a class="btn" href="https://github.com/Maxodus126/ALL-SENSE/releases/latest/download/AllSense-v1.0-x64.zip">Unduh Portabel</a>
@@ -475,45 +498,35 @@ a{color:inherit; text-decoration:none}
     <span>AllSense Control · v1.2.0</span>
     <span>Windows · WPF/.NET 8 · x64</span>
     <div class="r">
-      <a href="#app">Aplikasi</a>
+      <a href="#tampilan">Tampilan</a>
+      <a href="#halaman">Halaman</a>
       <a href="#fitur">Fitur</a>
       <a href="#status">Status</a>
       <a href="#unduh">Unduh</a>
+      <a href="https://github.com/Maxodus126/ALL-SENSE">GitHub</a>
     </div>
   </div>
 </footer>
 
 <script>
-/* Simulasi ringan bacaan live untuk mockup. Nilai contoh — bukan data nyata.
-   Dihormati prefers-reduced-motion. */
+/* Interaksi kecil: highlight nav saat scroll (progressive; tanpa library). */
 (function(){
-  var slow = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var cpu = 28.4, gpu = 54.0, ram = 46;
-  function fmt(v, d){ return v.toFixed(d); }
-  function paint(){
-    document.getElementById('cpuVal').innerHTML = fmt(cpu,1) + '<small>°C</small>';
-    document.getElementById('gpuVal').innerHTML = fmt(gpu,1) + '<small>°C</small>';
-    document.getElementById('ramVal').innerHTML = Math.round(ram) + '<small>%</small>';
-    var b = document.getElementById('cpuBar'); b.style.width = Math.min(100, cpu) + '%'; b.className = cpu>70?'hot':'ok';
-    var g = document.getElementById('gpuBar'); g.style.width = Math.min(100, gpu/105*100) + '%'; g.className = gpu>80?'hot':'ok';
-    var r = document.getElementById('ramBar'); r.style.width = ram + '%'; r.className = ram>85?'hot':'ok';
-  }
-  paint();
-  if(slow) return;
-  setInterval(function(){
-    cpu = Math.max(26, Math.min(96, cpu + (Math.random()-.5)*1.6));
-    gpu = Math.max(38, Math.min(105, gpu + (Math.random()-.5)*2.2));
-    ram = Math.max(30, Math.min(98, ram + (Math.random()-.5)*3));
-    paint();
-  }, 1600);
-})();
-
-/* interaktivitas kecil: segmen mode daya */
-document.querySelectorAll('.seg').forEach(function(seg){
-  seg.addEventListener('click', function(e){
-    var b = e.target.closest('button'); if(!b) return;
-    seg.querySelectorAll('button').forEach(function(x){ x.classList.remove('on'); });
-    b.classList.add('on');
+  var links = document.querySelectorAll('.nav a[href^="#"]');
+  var secs = [];
+  links.forEach(function(a){
+    var id = a.getAttribute('href').slice(1);
+    var el = document.getElementById(id);
+    if(el) secs.push({a:a, el:el});
   });
-});
+  function onScroll(){
+    var y = window.scrollY + 120;
+    var cur = null;
+    secs.forEach(function(s){ if(s.el.offsetTop <= y) cur = s; });
+    secs.forEach(function(s){ s.a.style.color = (s===cur) ? 'var(--red)' : ''; });
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
 </script>
+</body>
+</html>
