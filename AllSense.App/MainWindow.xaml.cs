@@ -106,7 +106,35 @@ public partial class MainWindow : Window
         ReadPowerState();
         SelectPage("dashboard");
 
-        Loaded += (_, _) => AutoCheckUpdate();
+        Loaded += (_, _) =>
+        {
+            AutoCheckUpdate();
+            EnsureVisibleAtStartup();
+        };
+    }
+
+    /// <summary>Jaga s jendela beneran tampil sesudah load: pulihkan kalau minim & ke slope windows
+    /// (kadang terjadi di rilis single-file / sesi non-interaktif — user cuma lihat taskbar kosong).</summary>
+    private DateTime _startUtc = DateTime.UtcNow;
+    private void EnsureVisibleAtStartup()
+    {
+        Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+        {
+            // Hanya dalam ~6 dtk pertama — jangan ganggu kalau user sengaja minimize.
+            if ((DateTime.UtcNow - _startUtc).TotalSeconds > 6) return;
+            if (WindowState == WindowState.Minimized) WindowState = WindowState.Normal;
+
+            var r = new Rect(Left, Top, ActualWidth, ActualHeight);
+            var vs = new Rect(SystemParameters.VirtualScreenLeft, SystemParameters.VirtualScreenTop,
+                              SystemParameters.VirtualScreenWidth, SystemParameters.VirtualScreenHeight);
+            if (ActualWidth > 0 && !vs.IntersectsWith(r))
+            {
+                WindowStartupLocation = WindowStartupLocation.Manual;
+                Left = SystemParameters.WorkArea.Left + (SystemParameters.WorkArea.Width - ActualWidth) / 2;
+                Top = SystemParameters.WorkArea.Top + (SystemParameters.WorkArea.Height - ActualHeight) / 2;
+            }
+            Activate();
+        }));
     }
 
     /* ---------------- Populasi statis ---------------- */
