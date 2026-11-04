@@ -22,6 +22,9 @@ public static class AppInfo
 /// <summary>Periksa & pasang update dari GitHub Releases (stable, tanpa prerelease).</summary>
 public static class AppUpdate
 {
+    /// <summary>Repo GitHub bawaan — dipakai otomatis kalau Settings kosong.</summary>
+    public const string DefaultRepo = "Maxodus126/ALL-SENSE";
+
     // Short timeout buat cek metadata; long timeout buat unduh (zip besar).
     private static readonly HttpClient Http = CreateHttp(TimeSpan.FromSeconds(20));
     private static readonly HttpClient HttpLong = CreateHttp(TimeSpan.FromMinutes(10));
@@ -58,7 +61,8 @@ public static class AppUpdate
         var r = new Result();
         try
         {
-            if (string.IsNullOrWhiteSpace(repo) || !IsValidRepo(repo))
+            if (string.IsNullOrWhiteSpace(repo)) repo = DefaultRepo;
+            if (!IsValidRepo(repo))
             { r.Error = "Repo belum diset dengan benar (format: owner/repo)."; return r; }
 
             using var req = Req($"https://api.github.com/repos/{repo.Trim()}/releases/latest", token);

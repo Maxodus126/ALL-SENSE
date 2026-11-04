@@ -195,6 +195,10 @@
                                     <TextBlock x:Name="ClockText" FontSize="11.5" FontWeight="Bold" FontFamily="Cascadia Mono, Consolas" Text="--:--:--"/>
                                 </StackPanel>
                             </Border>
+                            <Button x:Name="UpBadge" Style="{StaticResource FlatBtn}" Visibility="Collapsed"
+                                    Margin="10,0,0,0" Padding="12,6" FontSize="11.5" FontWeight="Bold"
+                                    Foreground="{StaticResource Red}" BorderBrush="{StaticResource Red}"
+                                    Click="UpBadge_Click"/>
                         </StackPanel>
                     </DockPanel>
                 </Border>

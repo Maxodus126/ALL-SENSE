@@ -107,6 +107,8 @@ public partial class MainWindow : Window
         PopulateStorage();
         ReadPowerState();
         SelectPage("dashboard");
+
+        Loaded += (_, _) => AutoCheckUpdate();
     }
 
     /* ---------------- Populasi statis ---------------- */
@@ -325,6 +327,7 @@ public partial class MainWindow : Window
     private async void UpCheck_Click(object sender, RoutedEventArgs e)
     {
         _updateRepo = UpRepo.Text.Trim();
+        if (string.IsNullOrWhiteSpace(_updateRepo)) { _updateRepo = AppUpdate.DefaultRepo; UpRepo.Text = _updateRepo; }
         _updateToken = UpToken.Password;
         SaveSettings();
         UpCheck.IsEnabled = false;
@@ -340,21 +343,32 @@ public partial class MainWindow : Window
             {
                 UpStatus.Text = "Sudah versi terbaru (" + AppInfo.VersionString + ").";
                 UpBtn.Visibility = Visibility.Collapsed;
+                UpBadge.Visibility = Visibility.Collapsed;
             }
             else
             {
                 UpStatus.Text = "Update tersedia: " + r.Tag + ".";
                 UpBtn.Content = "Unduh & pasang " + r.Tag;
                 UpBtn.Visibility = Visibility.Visible;
+                UpBadge.Content = "Update " + r.Tag + " · klik";
+                UpBadge.Visibility = Visibility.Visible;
             }
         }
         finally { UpCheck.IsEnabled = true; }
     }
 
     private async void UpBtn_Click(object sender, RoutedEventArgs e)
+        => await DoInstallAsync(_lastUpdate);
+
+    private async void UpBadge_Click(object sender, RoutedEventArgs e)
     {
-        var r = _lastUpdate;
-        if (r == null || string.IsNullOrEmpty(r.AssetUrl)) return;
+        UpBadge.Visibility = Visibility.Collapsed;
+        await DoInstallAsync(_lastUpdate);
+    }
+
+    private async Task DoInstallAsync(AppUpdate.Result? r)
+    {
+        if (r == null || string.IsNullOrEmpty(r.AssetUrl)) { UpBtn.IsEnabled = true; return; }
         UpBtn.IsEnabled = false;
         UpStatus.Text = "Mengunduh " + r.AssetName + "…";
         try
@@ -370,7 +384,28 @@ public partial class MainWindow : Window
         {
             UpStatus.Text = "Gagal memasang update: " + ex.Message;
             UpBtn.IsEnabled = true;
+            UpBadge.Visibility = Visibility.Visible;
         }
+    }
+
+    /// <summary>Cek update otomatis saat start — senyap kalau gagal / sudah terbaru.</summary>
+    private async void AutoCheckUpdate()
+    {
+        try
+        {
+            var r = await AppUpdate.CheckAsync(_updateRepo, _updateToken);
+            _lastUpdate = r;
+            if (!r.Ok || r.Latest! <= AppInfo.AssemblyVersion) return;
+
+            UpBadge.Content = "Update " + r.Tag + " · klik";
+            UpBadge.Visibility = Visibility.Visible;
+
+            // sinkronkan halaman Settings juga
+            UpStatus.Text = "Update tersedia: " + r.Tag + ".";
+            UpBtn.Content = "Unduh & pasang " + r.Tag;
+            UpBtn.Visibility = Visibility.Visible;
+        }
+        catch { }
     }
 
     /* ---------------- Loop live ---------------- */
@@ -639,7 +674,7 @@ public partial class MainWindow : Window
             _sampleIntervalSec = s.SampleIntervalSec >= 2 ? s.SampleIntervalSec : 2;
             _hMods = (uint)s.HotkeyModifiers;
             _hKey = (uint)s.HotkeyKey;
-            _updateRepo = s.UpdateRepo ?? "";
+            _updateRepo = string.IsNullOrWhiteSpace(s.UpdateRepo) ? AppUpdate.DefaultRepo : s.UpdateRepo!;
             _updateToken = s.UpdateToken ?? "";
         }
         catch { }

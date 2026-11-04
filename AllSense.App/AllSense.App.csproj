@@ -11,9 +11,9 @@
     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
     <AssemblyTitle>AllSense Control</AssemblyTitle>
     <Product>AllSense Control</Product>
-    <Version>1.2.1</Version>
-    <AssemblyVersion>1.2.1.0</AssemblyVersion>
-    <FileVersion>1.2.1.0</FileVersion>
+    <Version>1.2.2</Version>
+    <AssemblyVersion>1.2.2.0</AssemblyVersion>
+    <FileVersion>1.2.2.0</FileVersion>
     <Description>Universal laptop control center untuk Windows.</Description>
   </PropertyGroup>
 
