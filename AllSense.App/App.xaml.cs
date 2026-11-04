@@ -16,8 +16,8 @@ public partial class App : Application
 
     public App()
     {
-        InitializeComponent();
-
+        // Pasang handler SEBELUM InitializeComponent: kalau load sumber (font/native WPF)
+        // melempar DllNotFoundException/dll. lain, tetap tercatat, bukan mati senyap.
         DispatcherUnhandledException += (_, e) =>
         {
             LogCrash("dispatcher", e.Exception);
@@ -25,6 +25,8 @@ public partial class App : Application
         };
         AppDomain.CurrentDomain.UnhandledException += (_, e) =>
             LogCrash("appdomain", e.ExceptionObject as Exception);
+
+        InitializeComponent();
     }
 
     internal static void LogCrash(string kind, Exception? ex)
