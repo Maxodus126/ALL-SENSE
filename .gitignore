@@ -18,7 +18,14 @@ selftest-result.txt
 
 # Codebase alternatif / lama (bukan sumber aktif)
 AllSenseControl/
-AllSense.Setup/
+
+# Output build installer (source tetap ter-commit)
+AllSense.Setup/out/
+AllSense.Setup/bin/
+AllSense.Setup/obj/
+AllSense.Uninstall/out/
+AllSense.Uninstall/bin/
+AllSense.Uninstall/obj/
 
 # Desain / referensi web (tidak dipakai runtime)
 design.html
