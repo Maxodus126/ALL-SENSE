@@ -76,7 +76,8 @@ public partial class MainWindow : Window
 
         LoadSettings();
         if (_startWithWindows) ApplyStartWithWindows(true);
-        if (_minimizeToTray) SetupTray();
+        EnsureStartMenuShortcut();
+        SetupTray();   // ikon tray selalu ada selama app jalan
 
         _timer.Tick += (_, _) => Tick();
         _timer.Interval = TimeSpan.FromSeconds(_sampleIntervalSec);
@@ -115,14 +116,20 @@ public partial class MainWindow : Window
 
     /// <summary>Jaga s jendela beneran tampil sesudah load: pulihkan kalau minim & ke slope windows
     /// (kadang terjadi di rilis single-file / sesi non-interaktif — user cuma lihat taskbar kosong).</summary>
-    private DateTime _startUtc = DateTime.UtcNow;
+    private DateTime _startUtc;
     private void EnsureVisibleAtStartup()
     {
+        _startUtc = DateTime.UtcNow;   // ukur dari Loaded, bukan konstruksi (cold start single-file lambat)
         Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
         {
-            // Hanya dalam ~6 dtk pertama — jangan ganggu kalau user sengaja minimize.
-            if ((DateTime.UtcNow - _startUtc).TotalSeconds > 6) return;
-            if (WindowState == WindowState.Minimized) WindowState = WindowState.Normal;
+            bool corrected = false;
+
+            // Hanya dalam ~8 dtk — jangan ganggu kalau user sengaja minimize.
+            if ((DateTime.UtcNow - _startUtc).TotalSeconds <= 8 && WindowState == WindowState.Minimized)
+            {
+                WindowState = WindowState.Normal;
+                corrected = true;
+            }
 
             var r = new Rect(Left, Top, ActualWidth, ActualHeight);
             var vs = new Rect(SystemParameters.VirtualScreenLeft, SystemParameters.VirtualScreenTop,
@@ -132,8 +139,10 @@ public partial class MainWindow : Window
                 WindowStartupLocation = WindowStartupLocation.Manual;
                 Left = SystemParameters.WorkArea.Left + (SystemParameters.WorkArea.Width - ActualWidth) / 2;
                 Top = SystemParameters.WorkArea.Top + (SystemParameters.WorkArea.Height - ActualHeight) / 2;
+                corrected = true;
             }
-            Activate();
+
+            if (corrected) Activate();   // jangan rebut fokus kalau tak ada yang dikoreksi
         }));
     }
 
@@ -732,6 +741,52 @@ public partial class MainWindow : Window
             else key.DeleteValue("AllSense", throwOnMissingValue: false);
         }
         catch { }
+    }
+
+    /// <summary>Buat/refine shortcut "AllSense Control" di Start Menu (per-user, tanpa admin) — di thread belakang,
+    /// tak blokir paint pertama. Lewati kalau sudah ada dan menunjuk exe yang sama.</summary>
+    private static void EnsureStartMenuShortcut()
+    {
+        try { Task.Run(CreateStartMenuShortcut); }
+        catch { }
+    }
+
+    private static void CreateStartMenuShortcut()
+    {
+        try
+        {
+            string lnk = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.StartMenu),
+                "Programs", "AllSense Control.lnk");
+            string exe = Environment.ProcessPath!;
+            if (string.IsNullOrEmpty(exe) || !File.Exists(exe)) return;
+            // Jaga: kalau dijalankan via 'dotnet AllSense.App.dll', ProcessPath = dotnet.exe — shortcut bakal salah.
+            if (!Path.GetFileName(exe).Equals("AllSense.App.exe", StringComparison.OrdinalIgnoreCase)) return;
+
+            var t = Type.GetTypeFromProgID("WScript.Shell");
+            if (t is null) return;
+            object shellObj = Activator.CreateInstance(t) ?? throw new InvalidOperationException("Gagal buat COM WScript.Shell");
+            dynamic shell = shellObj;
+            dynamic sc = shell.CreateShortcut(lnk);
+
+            // Kalau lnk sudah ada & menunjuk exe yang sama → tak perlu tulis ulang.
+            bool fresh = (string?)sc.TargetPath == exe;
+            if (fresh)
+            {
+                Marshal.FinalReleaseComObject(sc);
+                Marshal.FinalReleaseComObject(shell);
+                return;
+            }
+
+            sc.TargetPath = exe;
+            sc.WorkingDirectory = Path.GetDirectoryName(exe);
+            sc.IconLocation = exe + ",0";
+            sc.Description = "AllSense Control";
+            sc.Save();
+            Marshal.FinalReleaseComObject(sc);
+            Marshal.FinalReleaseComObject(shell);
+        }
+        catch (Exception ex) { App.LogCrash("shortcut", ex); }
     }
 
     /* ---------------- Tray ---------------- */
