@@ -10,12 +10,13 @@ public sealed class HardwareMonitor : IDisposable
 {
     private readonly Computer _computer;
     private readonly object _lock = new();
-    private float _cpuC = float.NaN;
+    private float _cpuC = float.NaN;      // preferensi: inti CPU (LHM); fallback zona ACPI
     private float _gpuC = float.NaN;
     private float _ramC = float.NaN;
     private float _cpuLoad = float.NaN;
     private float _gpuLoad = float.NaN;
     private float _fanRpm = float.NaN;
+    private bool _cpuViaCore;             // true = suhu inti CPU asli terbaca
     private bool _cpuZone;
     private bool _opened;
 
@@ -55,8 +56,11 @@ public sealed class HardwareMonitor : IDisposable
         get { lock (_lock) return _opened ? _computer.Hardware : Array.Empty<IHardware>(); }
     }
 
-    /// <summary>Suhu mainboard/sistem (°C) dari zona termal ACPI; NaN bila zona tak terbaca.</summary>
+    /// <summary>Suhu CPU (°C): inti asli (LHM) bila terbaca, selain itu zona termal ACPI.</summary>
     public float CpuTemperatureC { get { lock (_lock) return _cpuC; } }
+
+    /// <summary>true bila suhu inti CPU asli terbaca (bukan zona ACPI).</summary>
+    public bool CpuViaCore { get { lock (_lock) return _cpuViaCore; } }
     public float GpuTemperatureC { get { lock (_lock) return _gpuC; } }
     public float MemoryTemperatureC { get { lock (_lock) return _ramC; } }
     public float CpuLoadPercent { get { lock (_lock) return _cpuLoad; } }
@@ -79,8 +83,14 @@ public sealed class HardwareMonitor : IDisposable
         if (!opened) return;
 
         float cpu = float.NaN, gpu = float.NaN, ram = float.NaN;
+        float cpuCore = float.NaN;
         float cpuLoad = float.NaN, gpuLoad = float.NaN;
         float fan = float.NaN;
+
+        // Akumulator GPU per kelas: diskret vs iGPU — hindari mencampur & memakai max antar-GPU.
+        float dCore = float.NaN, dSafe = float.NaN, dOther = float.NaN, dLoad = float.NaN;
+        float iCore = float.NaN, iSafe = float.NaN, iOther = float.NaN, iLoad = float.NaN;
+        bool hasDiscrete = false, hasIgpu = false;
 
         try
         {
@@ -100,22 +110,27 @@ public sealed class HardwareMonitor : IDisposable
                 switch (hw.HardwareType)
                 {
                     case HardwareType.Cpu:
-                        // Suhu inti CPU (LHM) diabaikan — butuh driver ring0 yang tak selalu
-                        // bisa dimuat. Suhu "CPU" yang kami tampilkan berasal dari zona termal
-                        // ACPI (suhu mainboard/sistem), lihat fallback di bawah.
+                        // Suhu inti CPU asli (LHM): dipakai kalau terbaca (butuh akses MSR);
+                        // kalau tidak, jatuh ke zona termal ACPI di bawah.
+                        float cpuCoreT = float.NaN;
                         foreach (var s in hw.Sensors)
                         {
-                            if (s.SensorType != SensorType.Load || !s.Value.HasValue) continue;
+                            if (!s.Value.HasValue) continue;
                             float v = s.Value.Value;
                             if (!float.IsFinite(v)) continue;
-                            cpuLoad = float.IsNaN(cpuLoad) ? v : Math.Max(cpuLoad, v);
+                            if (s.SensorType == SensorType.Temperature)
+                                cpuCoreT = float.IsNaN(cpuCoreT) ? v : Math.Max(cpuCoreT, v);
+                            else if (s.SensorType == SensorType.Load)
+                                cpuLoad = float.IsNaN(cpuLoad) ? v : Math.Max(cpuLoad, v);
                         }
+                        cpuCore = float.IsNaN(cpuCore) ? cpuCoreT : Math.Max(cpuCore, cpuCoreT);
                         break;
                     case HardwareType.GpuNvidia:
                     case HardwareType.GpuAmd:
                     case HardwareType.GpuIntel:
                         {
-                            float tBest = float.NaN, tCore = float.NaN;
+                            bool disc = hw.HardwareType is HardwareType.GpuNvidia or HardwareType.GpuAmd;
+                            float core = float.NaN, safe = float.NaN, other = float.NaN, load = float.NaN;
                             foreach (var s in hw.Sensors)
                             {
                                 if (!s.Value.HasValue) continue;
@@ -123,19 +138,21 @@ public sealed class HardwareMonitor : IDisposable
                                 if (!float.IsFinite(v)) continue;
                                 if (s.SensorType == SensorType.Temperature)
                                 {
-                                    // Prioritaskan sensor inti (GPU Core): Hot Spot / Memory Junction
-                                    // jauh lebih panas dan bukan suhu yang dibandingkan orang dgn Task Manager.
-                                    if (s.Name.Contains("core", StringComparison.OrdinalIgnoreCase))
-                                        tCore = float.IsNaN(tCore) ? v : Math.Max(tCore, v);
+                                    string n = s.Name.ToLowerInvariant();
+                                    // Prioritas: inti (GPU Core) > suhu umum aman (GPU Temperature)
+                                    // > lainnya (Hot Spot / Junction / Memory — dipakai hanya kalau tak ada lagi).
+                                    if (n.Contains("core"))
+                                        core = float.IsNaN(core) ? v : Math.Max(core, v);
+                                    else if (n.Contains("hot") || n.Contains("junction") || n.Contains("memory") || n.Contains("vram"))
+                                        other = float.IsNaN(other) ? v : Math.Max(other, v);
                                     else
-                                        tBest = float.IsNaN(tBest) ? v : Math.Max(tBest, v);
+                                        safe = float.IsNaN(safe) ? v : Math.Max(safe, v);
                                 }
                                 else if (s.SensorType == SensorType.Load)
-                                    gpuLoad = float.IsNaN(gpuLoad) ? v : Math.Max(gpuLoad, v);
+                                    load = float.IsNaN(load) ? v : Math.Max(load, v);
                             }
-                            float tg = float.IsNaN(tCore) ? tBest : tCore;
-                            if (!float.IsNaN(tg))
-                                gpu = float.IsNaN(gpu) ? tg : Math.Max(gpu, tg);
+                            if (disc) { hasDiscrete = true; dCore = Max(dCore, core); dSafe = Max(dSafe, safe); dOther = Max(dOther, other); dLoad = Max(dLoad, load); }
+                            else { hasIgpu = true; iCore = Max(iCore, core); iSafe = Max(iSafe, safe); iOther = Max(iOther, other); iLoad = Max(iLoad, load); }
                         }
                         break;
                     case HardwareType.Memory:
@@ -152,13 +169,22 @@ public sealed class HardwareMonitor : IDisposable
         }
         catch { return; }
 
-        // Suhu "CPU" = suhu mainboard/sistem dari zona termal ACPI (WMI). Selalu
-        // dipakai, bukan hanya fallback — jujur & konsisten di semua laptop.
+        // Suhu "CPU": preferensi inti asli (LHM); kalau tak terbaca, fallback zona ACPI.
         bool zone = false;
-        cpu = GetCpuViaWmi();
-        zone = !float.IsNaN(cpu);
+        float zoneC = GetCpuViaWmi();
+        zone = !float.IsNaN(zoneC);
+        if (!float.IsNaN(cpuCore)) { cpu = cpuCore; }
+        else if (zone) { cpu = zoneC; }
 
-        lock (_lock) { _cpuC = cpu; _gpuC = gpu; _ramC = ram; _cpuLoad = cpuLoad; _gpuLoad = gpuLoad; _fanRpm = fan; _cpuZone = zone; }
+        // Suhu "GPU": pakai GPU diskret kalau ada, selain itu iGPU; inti > aman > lainnya.
+        if (hasDiscrete) { gpu = PickGpuTemp(dCore, dSafe, dOther); gpuLoad = dLoad; }
+        else if (hasIgpu) { gpu = PickGpuTemp(iCore, iSafe, iOther); gpuLoad = iLoad; }
+
+        lock (_lock)
+        {
+            _cpuC = cpu; _gpuC = gpu; _ramC = ram; _cpuLoad = cpuLoad; _gpuLoad = gpuLoad;
+            _fanRpm = fan; _cpuZone = zone; _cpuViaCore = !float.IsNaN(cpuCore);
+        }
     }
 
     private static float GetCpuViaWmi()
@@ -199,6 +225,12 @@ public sealed class HardwareMonitor : IDisposable
 
         return best;
     }
+
+    private static float Max(float a, float b)
+        => float.IsNaN(a) ? b : float.IsNaN(b) ? a : Math.Max(a, b);
+
+    private static float PickGpuTemp(float core, float safe, float other)
+        => !float.IsNaN(core) ? core : !float.IsNaN(safe) ? safe : other;
 
     public void Dispose()
     {

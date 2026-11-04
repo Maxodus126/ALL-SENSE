@@ -35,8 +35,7 @@ public partial class MainWindow : Window
 
     // Update.
     private AppUpdate.Result? _lastUpdate;
-    private string _updateRepo = "";
-    private string _updateToken = "";
+    private string _updateRepo = AppUpdate.DefaultRepo;
 
     // Pengaturan.
     private readonly string _settingsDir = Path.Combine(
@@ -56,7 +55,6 @@ public partial class MainWindow : Window
         public int HotkeyModifiers { get; set; } = (int)(Hotkey.MOD_CONTROL | Hotkey.MOD_ALT);
         public int HotkeyKey { get; set; } = 0x41;
         public string UpdateRepo { get; set; } = "";
-        public string UpdateToken { get; set; } = "";
     }
 
     private static readonly (string Key, string Title, string Crumb)[] Pages =
@@ -136,7 +134,6 @@ public partial class MainWindow : Window
         UpVer.Text = AppInfo.VersionString;
         HkBox.Text = Hotkey.Format(_hMods, _hKey);
         UpRepo.Text = _updateRepo;
-        UpToken.Password = _updateToken;
     }
 
     private string CpuShort() => SystemInfo.CpuName.Split(' ')[0];
@@ -328,14 +325,13 @@ public partial class MainWindow : Window
     {
         _updateRepo = UpRepo.Text.Trim();
         if (string.IsNullOrWhiteSpace(_updateRepo)) { _updateRepo = AppUpdate.DefaultRepo; UpRepo.Text = _updateRepo; }
-        _updateToken = UpToken.Password;
         SaveSettings();
         UpCheck.IsEnabled = false;
         UpStatus.Text = "Memeriksa…";
         UpBtn.Visibility = Visibility.Collapsed;
         try
         {
-            var r = await AppUpdate.CheckAsync(_updateRepo, _updateToken);
+            var r = await AppUpdate.CheckAsync(_updateRepo);
             _lastUpdate = r;
             if (!r.Ok)
                 UpStatus.Text = r.Error ?? "Gagal memeriksa update.";
@@ -374,7 +370,7 @@ public partial class MainWindow : Window
         try
         {
             string dir = Path.Combine(Path.GetTempPath(), "AllSense-update");
-            string zip = await AppUpdate.DownloadAsync(r.AssetUrl!, dir, UpToken.Password);
+            string zip = await AppUpdate.DownloadAsync(r.AssetUrl!, dir);
             UpStatus.Text = "Memasang… AllSense akan ditutup lalu restart.";
             AppUpdate.Install(zip, Environment.ProcessPath!);
             _trayExitRequested = true;   // paksa keluar (jangan sembunyi ke tray)
@@ -393,7 +389,7 @@ public partial class MainWindow : Window
     {
         try
         {
-            var r = await AppUpdate.CheckAsync(_updateRepo, _updateToken);
+            var r = await AppUpdate.CheckAsync(_updateRepo);
             _lastUpdate = r;
             if (!r.Ok || r.Latest! <= AppInfo.AssemblyVersion) return;
 
@@ -456,8 +452,8 @@ public partial class MainWindow : Window
         ChipSrc.Text = s.Ac == null ? "—" : s.Ac.Value ? "AC" : "Baterai";
 
         // Dashboard gauges — SISTEM/GPU tampilkan SUHU (selaras halaman Cooling); bar = beban.
-        CpuPct.Text = PctText(s.CpuT);
-        GpuPct.Text = PctText(s.GpuT);
+        CpuPct.Text = Fmt(s.CpuT) + "°C";
+        GpuPct.Text = Fmt(s.GpuT) + "°C";
         SetGauge(GaugeRam, (float)ramPct, null);
         SetGauge(GaugeBat, s.Bat.ChargePercent ?? 0, null);
         BarCpu.Value = Clamp(s.CpuL);
@@ -465,7 +461,7 @@ public partial class MainWindow : Window
         BarRam.Value = Clamp(ramPct);
         BarBat.Value = Clamp(s.Bat.ChargePercent ?? 0);
 
-        TileCpuSub.Text = Fmt(s.CpuT) + "°C · zona ACPI";
+        TileCpuSub.Text = Fmt(s.CpuT) + "°C · " + (_hw.CpuViaCore ? "inti" : "zona ACPI");
         TileGpuSub.Text = Fmt(s.GpuT) + "°C · core";
         TileRamSub.Text = s.Used.ToString("0.#") + " GB terpakai";
         TileBatSub.Text = Fmt(s.Bat.ChargePercent) + "% · " + (s.Ac == false ? "Baterai" : "AC");
@@ -481,10 +477,10 @@ public partial class MainWindow : Window
         BTemp.Text = Fmt(s.CpuT) + "°C";
 
         // Cooling page
-        CoolCpuPct.Text = PctText(s.CpuT);
-        CoolCpuSub.Text = Fmt(s.CpuT) + "°C · zona ACPI";
+        CoolCpuPct.Text = Fmt(s.CpuT) + "°C";
+        CoolCpuSub.Text = Fmt(s.CpuT) + "°C · " + (_hw.CpuViaCore ? "inti" : "zona ACPI");
         CoolBarCpu.Value = PctTemp(s.CpuT);
-        CoolGpuPct.Text = PctText(s.GpuT);
+        CoolGpuPct.Text = Fmt(s.GpuT) + "°C";
         CoolGpuSub.Text = Fmt(s.GpuT) + "°C · core";
         CoolBarGpu.Value = PctTemp(s.GpuT);
         FanRpm.Text = Fmt(s.Fan);
@@ -499,7 +495,6 @@ public partial class MainWindow : Window
     private static double Clamp(float v) => float.IsNaN(v) ? 0 : Math.Clamp(v, 0, 100);
     private static double Clamp(double v) => double.IsNaN(v) ? 0 : Math.Clamp(v, 0, 100);
     private static double PctTemp(float t) => float.IsNaN(t) ? 0 : Math.Clamp((t - 20) * 100 / 80, 0, 100);
-    private static string PctText(float t) => float.IsNaN(t) ? "—" : Math.Round(PctTemp(t)).ToString("0") + "%";
     private static string Fmt(float f) => float.IsFinite(f) ? Math.Round(f).ToString("0") : "—";
     private static string Fmt(int? n) => n is int v ? v.ToString() : "—";
 
@@ -675,7 +670,6 @@ public partial class MainWindow : Window
             _hMods = (uint)s.HotkeyModifiers;
             _hKey = (uint)s.HotkeyKey;
             _updateRepo = string.IsNullOrWhiteSpace(s.UpdateRepo) ? AppUpdate.DefaultRepo : s.UpdateRepo!;
-            _updateToken = s.UpdateToken ?? "";
         }
         catch { }
     }
@@ -693,7 +687,6 @@ public partial class MainWindow : Window
                 HotkeyModifiers = (int)_hMods,
                 HotkeyKey = (int)_hKey,
                 UpdateRepo = _updateRepo,
-                UpdateToken = _updateToken,
             };
             File.WriteAllText(_settingsFile, JsonSerializer.Serialize(s));
         }

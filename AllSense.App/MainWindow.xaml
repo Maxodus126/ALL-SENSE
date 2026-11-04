@@ -275,13 +275,14 @@
                                     <StackPanel>
                                         <Grid><TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Red}" Text="SISTEM"/>
                                               <Border HorizontalAlignment="Right" CornerRadius="5" Padding="7,2" BorderBrush="{StaticResource Line}" BorderThickness="1"><TextBlock FontSize="9" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Txt3}" Text="SUHU SISTEM"/></Border></Grid>
-                                        <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
-                                            <TextBlock x:Name="CpuPct" Width="72" FontSize="24" FontWeight="Bold" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Red}" VerticalAlignment="Center" Text="—"/>
-                                            <StackPanel Margin="10,0,0,0" VerticalAlignment="Center">
+                                        <Grid Margin="0,12,0,0">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" x:Name="CpuPct" FontSize="24" FontWeight="Bold" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Red}" VerticalAlignment="Center" Text="—"/>
+                                            <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
                                                 <TextBlock x:Name="TileCpuName" FontSize="13" FontWeight="Bold" TextWrapping="Wrap"/>
                                                 <TextBlock x:Name="TileCpuSub" FontSize="11" Foreground="{StaticResource Txt3}" Margin="0,2,0,0" TextWrapping="Wrap"/>
                                             </StackPanel>
-                                        </StackPanel>
+                                        </Grid>
                                         <ProgressBar x:Name="BarCpu" Margin="0,12,0,0" Foreground="{StaticResource Red}" Value="0"/>
                                     </StackPanel>
                                 </Border>
@@ -291,13 +292,14 @@
                                     <StackPanel>
                                         <Grid><TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Blueprint}" Text="GPU"/>
                                               <Border HorizontalAlignment="Right" CornerRadius="5" Padding="7,2" BorderBrush="{StaticResource Line}" BorderThickness="1"><TextBlock FontSize="9" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Txt3}" Text="CORE TEMP"/></Border></Grid>
-                                        <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
-                                            <TextBlock x:Name="GpuPct" Width="72" FontSize="24" FontWeight="Bold" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Blueprint}" VerticalAlignment="Center" Text="—"/>
-                                            <StackPanel Margin="10,0,0,0" VerticalAlignment="Center">
+                                        <Grid Margin="0,12,0,0">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" x:Name="GpuPct" FontSize="24" FontWeight="Bold" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Blueprint}" VerticalAlignment="Center" Text="—"/>
+                                            <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
                                                 <TextBlock x:Name="TileGpuName" FontSize="13" FontWeight="Bold" TextWrapping="Wrap"/>
                                                 <TextBlock x:Name="TileGpuSub" FontSize="11" Foreground="{StaticResource Txt3}" Margin="0,2,0,0" TextWrapping="Wrap"/>
                                             </StackPanel>
-                                        </StackPanel>
+                                        </Grid>
                                         <ProgressBar x:Name="BarGpu" Margin="0,12,0,0" Foreground="{StaticResource Blueprint}" Value="0"/>
                                     </StackPanel>
                                 </Border>
@@ -307,13 +309,14 @@
                                     <StackPanel>
                                         <Grid><TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Green}" Text="RAM"/>
                                               <Border HorizontalAlignment="Right" CornerRadius="5" Padding="7,2" BorderBrush="{StaticResource Line}" BorderThickness="1"><TextBlock FontSize="9" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Txt3}" Text="MEMORI"/></Border></Grid>
-                                        <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
-                                            <local:RingGauge x:Name="GaugeRam" Width="72" Height="72" Value="0" Accent="{StaticResource Green}"/>
-                                            <StackPanel Margin="10,0,0,0" VerticalAlignment="Center">
+                                        <Grid Margin="0,12,0,0">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                            <local:RingGauge Grid.Column="0" x:Name="GaugeRam" Width="64" Height="64" Value="0" Accent="{StaticResource Green}"/>
+                                            <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
                                                 <TextBlock FontSize="13" FontWeight="Bold" Text="RAM"/>
                                                 <TextBlock x:Name="TileRamSub" FontSize="11" Foreground="{StaticResource Txt3}" Margin="0,2,0,0" TextWrapping="Wrap"/>
                                             </StackPanel>
-                                        </StackPanel>
+                                        </Grid>
                                         <ProgressBar x:Name="BarRam" Margin="0,12,0,0" Foreground="{StaticResource Green}" Value="0"/>
                                     </StackPanel>
                                 </Border>
@@ -323,13 +326,14 @@
                                     <StackPanel>
                                         <Grid><TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Red}" Text="BATERAI"/>
                                               <Border HorizontalAlignment="Right" CornerRadius="5" Padding="7,2" BorderBrush="{StaticResource Line}" BorderThickness="1"><TextBlock FontSize="9" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Txt3}" Text="DAYA"/></Border></Grid>
-                                        <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
-                                            <local:RingGauge x:Name="GaugeBat" Width="72" Height="72" Value="0" Accent="{StaticResource Red}"/>
-                                            <StackPanel Margin="10,0,0,0" VerticalAlignment="Center">
+                                        <Grid Margin="0,12,0,0">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                            <local:RingGauge Grid.Column="0" x:Name="GaugeBat" Width="64" Height="64" Value="0" Accent="{StaticResource Red}"/>
+                                            <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
                                                 <TextBlock FontSize="13" FontWeight="Bold" Text="Baterai" TextWrapping="Wrap"/>
                                                 <TextBlock x:Name="TileBatSub" FontSize="11" Foreground="{StaticResource Txt3}" Margin="0,2,0,0" TextWrapping="Wrap"/>
                                             </StackPanel>
-                                        </StackPanel>
+                                        </Grid>
                                         <ProgressBar x:Name="BarBat" Margin="0,12,0,0" Foreground="{StaticResource Red}" Value="0"/>
                                     </StackPanel>
                                 </Border>
@@ -493,13 +497,14 @@
                                     <StackPanel>
                                         <Grid><TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Red}" Text="SUHU SISTEM"/>
                                               <Border HorizontalAlignment="Right" CornerRadius="5" Padding="7,2" BorderBrush="{StaticResource Line}" BorderThickness="1"><TextBlock FontSize="9" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Txt3}" Text="ACPI"/></Border></Grid>
-                                        <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
-                                            <TextBlock x:Name="CoolCpuPct" Width="92" FontSize="30" FontWeight="Bold" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Red}" VerticalAlignment="Center" Text="—"/>
-                                            <StackPanel Margin="14,0,0,0" VerticalAlignment="Center">
+                                        <Grid Margin="0,14,0,0">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" x:Name="CoolCpuPct" FontSize="30" FontWeight="Bold" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Red}" VerticalAlignment="Center" Text="—"/>
+                                            <StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
                                                 <TextBlock x:Name="CoolCpuName" FontSize="13.5" FontWeight="Bold" TextWrapping="Wrap"/>
                                                 <TextBlock x:Name="CoolCpuSub" FontSize="11" Foreground="{StaticResource Txt3}" Margin="0,2,0,0" TextWrapping="Wrap"/>
                                             </StackPanel>
-                                        </StackPanel>
+                                        </Grid>
                                         <ProgressBar x:Name="CoolBarCpu" Margin="0,14,0,0" Foreground="{StaticResource Red}" Value="0"/>
                                     </StackPanel>
                                 </Border>
@@ -507,13 +512,14 @@
                                     <StackPanel>
                                         <Grid><TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Blueprint}" Text="SUHU GPU"/>
                                               <Border HorizontalAlignment="Right" CornerRadius="5" Padding="7,2" BorderBrush="{StaticResource Line}" BorderThickness="1"><TextBlock FontSize="9" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Txt3}" Text="ZONA"/></Border></Grid>
-                                        <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
-                                            <TextBlock x:Name="CoolGpuPct" Width="92" FontSize="30" FontWeight="Bold" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Blueprint}" VerticalAlignment="Center" Text="—"/>
-                                            <StackPanel Margin="14,0,0,0" VerticalAlignment="Center">
+                                        <Grid Margin="0,14,0,0">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" x:Name="CoolGpuPct" FontSize="30" FontWeight="Bold" FontFamily="Cascadia Mono, Consolas" Foreground="{StaticResource Blueprint}" VerticalAlignment="Center" Text="—"/>
+                                            <StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
                                                 <TextBlock x:Name="CoolGpuName" FontSize="13.5" FontWeight="Bold" TextWrapping="Wrap"/>
                                                 <TextBlock x:Name="CoolGpuSub" FontSize="11" Foreground="{StaticResource Txt3}" Margin="0,2,0,0" TextWrapping="Wrap"/>
                                             </StackPanel>
-                                        </StackPanel>
+                                        </Grid>
                                         <ProgressBar x:Name="CoolBarGpu" Margin="0,14,0,0" Foreground="{StaticResource Blueprint}" Value="0"/>
                                     </StackPanel>
                                 </Border>
@@ -565,14 +571,15 @@
                             <Grid>
                                 <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                                 <Border Grid.Column="0" Style="{StaticResource Card}" Margin="0,0,9,0" Padding="24">
-                                    <StackPanel Orientation="Horizontal">
-                                        <local:RingGauge x:Name="BatBig" Width="150" Height="150" Value="0" Accent="{StaticResource Red}" Unit="persen"/>
-                                        <StackPanel Margin="24,0,0,0" VerticalAlignment="Center">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                        <local:RingGauge Grid.Column="0" x:Name="BatBig" Width="150" Height="150" Value="0" Accent="{StaticResource Red}" Unit="persen"/>
+                                        <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Center">
                                             <TextBlock Style="{StaticResource CardLabel}" Foreground="{StaticResource Green}" Text="DAYA TERSISA"/>
                                             <TextBlock x:Name="BatState" FontSize="16" FontWeight="Bold" Foreground="{StaticResource Green}" Margin="0,9,0,0" Text="—"/>
                                             <TextBlock x:Name="BatSub" FontSize="12.5" Foreground="{StaticResource Txt3}" Margin="0,5,0,0" Text="Sumber: —"/>
                                         </StackPanel>
-                                    </StackPanel>
+                                    </Grid>
                                 </Border>
                                 <Border Grid.Column="1" Style="{StaticResource Card}" Margin="9,0,0,0">
                                     <StackPanel>
@@ -679,17 +686,16 @@
                                             <CheckBox x:Name="SetSW" HorizontalAlignment="Right" Checked="SetSW_Changed" Unchecked="SetSW_Changed"/></Grid>
                                         <Grid Margin="0,12,0,0"><TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Minimalkan ke tray"/>
                                             <CheckBox x:Name="SetTray" HorizontalAlignment="Right" Checked="SetTray_Changed" Unchecked="SetTray_Changed"/></Grid>
-                                        <Grid Margin="0,12,0,0">
-                                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                                            <TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Shortcut global panggil AllSense" TextWrapping="Wrap" VerticalAlignment="Center"/>
-                                            <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                                <TextBox x:Name="HkBox" Width="170" Height="30" IsReadOnly="True"
+                                        <StackPanel Margin="0,12,0,0">
+                                            <TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Shortcut global panggil AllSense"/>
+                                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                                <TextBox x:Name="HkBox" Width="180" Height="30" IsReadOnly="True"
                                                          PreviewKeyDown="HkBox_PreviewKeyDown"
                                                          ToolTip="Klik, lalu tekan kombinasi tombol. Minimal satu modifier (Ctrl/Alt/Shift/Win)."/>
                                                 <Button Content="Reset" Margin="8,0,0,0" Style="{StaticResource FlatBtn}"
                                                         Padding="14,4" Click="HkReset_Click"/>
                                             </StackPanel>
-                                        </Grid>
+                                        </StackPanel>
                                     </StackPanel>
                                 </Border>
                                 <Border Grid.Column="1" Style="{StaticResource Card}" Margin="9,0,0,0">
@@ -720,12 +726,6 @@
                                         <TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Repo GitHub (owner/repo)" VerticalAlignment="Center"/>
                                         <TextBox x:Name="UpRepo" Grid.Column="1" Margin="12,0,12,0" Height="30"/>
                                         <Button Grid.Column="2" x:Name="UpCheck" Style="{StaticResource FlatBtn}" Content="Cek update" Click="UpCheck_Click"/>
-                                    </Grid>
-                                    <Grid Margin="0,10,0,0">
-                                        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                                        <TextBlock Foreground="{StaticResource Txt2}" FontSize="12.5" Text="Token GitHub (opsional)" VerticalAlignment="Center"/>
-                                        <PasswordBox x:Name="UpToken" Grid.Column="1" Margin="12,0,0,0" Height="30"
-                                                    ToolTip="Fine-grained token (opsional). Diperlukan hanya untuk repo privat. Simpan lokal, jangan dibagikan."/>
                                     </Grid>
                                     <TextBlock x:Name="UpStatus" FontSize="12" Foreground="{StaticResource Txt3}"
                                                TextWrapping="Wrap" Margin="0,10,0,0" Text="Set repo GitHub lalu klik 'Cek update'."/>
