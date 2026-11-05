@@ -7,9 +7,9 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <AssemblyName>AllSense.Setup</AssemblyName>
-    <Version>1.3.1</Version>
-    <AssemblyVersion>1.3.1.0</AssemblyVersion>
-    <FileVersion>1.3.1.0</FileVersion>
+    <Version>1.3.2</Version>
+    <AssemblyVersion>1.3.2.0</AssemblyVersion>
+    <FileVersion>1.3.2.0</FileVersion>
     <Product>AllSense Setup</Product>
     <Description>AllSense Setup</Description>
     <ApplicationIcon>..\AllSense.App\AllSense.ico</ApplicationIcon>

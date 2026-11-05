@@ -11,7 +11,7 @@ public static class SetupCore
 {
     public const string AppExe = "AllSense.App.exe";
     public const string UninstallExe = "AllSense.Uninstall.exe";
-    public const string DisplayVersion = "1.3.1";
+    public const string DisplayVersion = "1.3.2";
 
     public static string DefaultInstallDir => Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
