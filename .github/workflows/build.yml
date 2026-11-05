@@ -9,6 +9,8 @@ on:
 jobs:
   build-setup:
     runs-on: windows-latest
+    permissions:
+      contents: write   # diperlukan softprops/action-gh-release untuk bikin rilis
     steps:
       - uses: actions/checkout@v4
 
