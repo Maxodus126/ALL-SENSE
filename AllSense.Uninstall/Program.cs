@@ -47,21 +47,36 @@ internal static class Program
         }
         catch { }
 
-        // Hapus direktori + diri sendiri setelah 2 dtk (proses ini sudah keluar → file tak terkunci).
-        if (!string.IsNullOrWhiteSpace(dir) && Directory.Exists(dir))
+        // Hapus direktori + diri sendiri setelah 2 dtk, dengan retry (proses ini sudah keluar
+        // → file tak terkunci). Pakai PowerShell: lebih andal daripada rmdir (retry + force).
+        if (!string.IsNullOrWhiteSpace(dir))
         {
             string self = Environment.ProcessPath ?? "";
-            string dirQ = "\"" + dir.Replace("\"", "") + "\"";
-            string selfQ = "\"" + self.Replace("\"", "") + "\"";
-            string cmd = "/c timeout /t 2 /nobreak >nul & rmdir /s /q " + dirQ +
-                         " & reg delete \"HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\AllSense\" /f >nul 2>&1 & del /q " + selfQ + " >nul 2>&1";
+            string dirEsc = dir.Replace("'", "''");
+            string selfEsc = self.Replace("'", "''");
+            // Hapus tiap file dgn retry (AV/Defender sering kunci exe besar beberapa dtk).
+            string ps =
+                "Start-Sleep -Seconds 5; Set-Location $env:TEMP; " +
+                "$ok=$false; if(Test-Path -LiteralPath '##DIR##'){ " +
+                "  Get-ChildItem -LiteralPath '##DIR##' -Recurse -File -ErrorAction SilentlyContinue | ForEach-Object { $f=$_.FullName; $j=0; while($j -lt 30){ try { Remove-Item -LiteralPath $f -Force -ErrorAction Stop; break } catch { Start-Sleep -Milliseconds 1000; $j++ } } }; " +
+                "  for($i=0;$i -lt 10 -and -not $ok;$i++){ try { Remove-Item -LiteralPath '##DIR##' -Recurse -Force -ErrorAction Stop; $ok=$true } catch { Start-Sleep -Seconds 1 } } " +
+                "}; " +
+                "reg delete 'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\AllSense' /f | Out-Null; " +
+                "del '##SELF##' | Out-Null";
+            ps = ps.Replace("##DIR##", dirEsc).Replace("##SELF##", selfEsc);
             try
             {
-                Process.Start(new ProcessStartInfo("cmd.exe", cmd)
+                var psi = new ProcessStartInfo("powershell.exe")
                 {
                     UseShellExecute = false,
                     CreateNoWindow = true,
-                });
+                };
+                psi.ArgumentList.Add("-NoProfile");
+                psi.ArgumentList.Add("-WindowStyle");
+                psi.ArgumentList.Add("Hidden");
+                psi.ArgumentList.Add("-Command");
+                psi.ArgumentList.Add(ps);
+                Process.Start(psi);
             }
             catch { }
         }

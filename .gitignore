@@ -23,9 +23,16 @@ AllSenseControl/
 AllSense.Setup/out/
 AllSense.Setup/bin/
 AllSense.Setup/obj/
+AllSense.Setup/AllSense.App.pkg.gz
 AllSense.Uninstall/out/
 AllSense.Uninstall/bin/
 AllSense.Uninstall/obj/
+out-ci/
+out/
+AllSense.App/publish-ico/
+AllSense.App/bin/
+AllSense.App/obj/
+AllSense.App/dist/
 
 # Desain / referensi web (tidak dipakai runtime)
 design.html
