@@ -64,6 +64,7 @@
   .frame .bar .r{background:#ff5f57}.frame .bar .y{background:#febc2e}.frame .bar .g{background:#28c840}
   .frame .bar span{margin-left:auto;font-size:11px;color:var(--dim);font-family:"Consolas",monospace}
   .frame img{width:100%}
+  .frame iframe{width:100%;height:560px;border:0;display:block}
   .float-chip{position:absolute;bottom:-20px;left:-18px;display:flex;align-items:center;gap:10px;
     background:rgba(14,16,23,.94);border:1px solid var(--line2);border-radius:14px;padding:10px 16px;
     box-shadow:0 16px 40px rgba(0,0,0,.55);animation:floaty 3.4s ease-in-out infinite}
@@ -148,6 +149,7 @@
     .hero h1{font-size:38px}
     .two{grid-template-columns:1fr}
     .footer-grid{grid-template-columns:1fr}
+    .frame iframe{height:480px}
     .osd{top:40px;padding:12px 16px}
     .osd .bt{display:none}
   }
@@ -194,7 +196,7 @@
     <div class="mock">
       <div class="frame">
         <div class="bar"><i class="r"></i><i class="y"></i><i class="g"></i><span>AllSense Control</span></div>
-        <img src="app-ui.png" alt="Pratinjau antarmuka AllSense Control">
+        <iframe src="app-demo.html" title="Demo interaktif antarmuka AllSense Control" loading="lazy"></iframe>
       </div>
       <div class="float-chip">
         <span class="chip-mark"><svg viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11L9.5 22 19.5 10H13L15.5 2Z"/></svg></span>
@@ -217,7 +219,7 @@
     <div class="showcase">
       <div class="frame">
         <div class="bar"><i class="r"></i><i class="y"></i><i class="g"></i><span>AllSense Control</span></div>
-        <img src="app-ui.png" alt="Tampilan aplikasi AllSense Control">
+        <iframe src="app-demo.html" title="Demo interaktif antarmuka AllSense Control" loading="lazy"></iframe>
       </div>
       <div class="points">
         <div class="point">
