@@ -3,159 +3,327 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="AllSense Control — panel kontrol kecerahan, volume & mode daya Windows. Universal, tanpa admin, tanpa driver vendor.">
 <title>AllSense Control — Maxodus</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M13 2 4.5 13.5H11L9.5 22 19.5 10H13L15.5 2Z' fill='%23FF4356'/%3E%3C/svg%3E">
 <style>
   :root{
-    --bg:#0b0d13; --bg2:#12151d; --panel:#171b26; --panel2:#1e2331;
-    --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.14);
-    --fg:#eef0f5; --muted:#9aa3b2; --dim:#5d6675;
-    --red:#ff4356; --blue:#4d8dff; --green:#35c973; --amber:#ffb020;
+    --bg:#08090d; --bg2:#0e1017; --panel:#12151e; --panel2:#1a1f2b;
+    --line:rgba(255,255,255,.07); --line2:rgba(255,255,255,.13);
+    --fg:#f2f4f8; --muted:#9aa3b4; --dim:#596272;
+    --red:#ff4356; --red2:#ff6a4d; --blue:#4d8dff; --green:#35c973; --amber:#ffb020;
+    --radius:20px; --shadow:0 24px 60px rgba(0,0,0,.5);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
-  body{background:radial-gradient(1200px 600px at 80% -10%, rgba(255,67,86,.12), transparent 60%), var(--bg);
-    color:var(--fg);font-family:"Segoe UI",system-ui,-apple-system,sans-serif;line-height:1.65;min-height:100vh}
+  body{background:var(--bg);color:var(--fg);font-family:"Segoe UI",system-ui,-apple-system,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased}
+  img{max-width:100%;display:block}
   a{color:var(--blue);text-decoration:none}
   a:hover{text-decoration:underline}
-  .wrap{max-width:980px;margin:0 auto;padding:56px 24px 72px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 28px}
 
-  /* header/nav */
-  .nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:56px}
+  /* ---------- nav ---------- */
+  .nav{position:sticky;top:0;z-index:40;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    background:rgba(8,9,13,.72);border-bottom:1px solid var(--line)}
+  .nav-in{max-width:1080px;margin:0 auto;padding:16px 28px;display:flex;align-items:center;justify-content:space-between;gap:20px}
   .brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:16px}
-  .brand .mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--red),#ff8a5b);
-    display:grid;place-items:center;box-shadow:0 6px 18px rgba(255,67,86,.4)}
-  .brand .mark svg{width:18px;height:18px;fill:#0b0d13}
-  .nav .links{display:flex;gap:22px;color:var(--muted);font-size:13.5px;font-weight:600}
-  .nav a{color:var(--muted)} .nav a:hover{color:var(--fg)}
+  .brand .mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--red),var(--red2));
+    display:grid;place-items:center;box-shadow:0 6px 20px rgba(255,67,86,.4)}
+  .brand .mark svg{width:18px;height:18px;fill:#08090d}
+  .nav-links{display:flex;align-items:center;gap:24px;font-size:13.5px;font-weight:600}
+  .nav-links a{color:var(--muted)} .nav-links a:hover{color:var(--fg);text-decoration:none}
+  .nav-cta{background:linear-gradient(135deg,var(--red),var(--red2));color:#fff!important;
+    padding:9px 18px;border-radius:11px;font-weight:700;box-shadow:0 8px 24px rgba(255,67,86,.3)}
+  .nav-cta:hover{color:#fff!important;transform:translateY(-1px);text-decoration:none}
 
-  /* hero */
-  .hero{display:flex;gap:44px;align-items:center;flex-wrap:wrap;margin-bottom:64px}
-  .hero .copy{flex:1;min-width:280px}
-  .badge-live{display:inline-flex;align-items:center;gap:8px;color:var(--green);font-size:12px;font-weight:700;
-    border:1px solid rgba(53,201,115,.35);background:rgba(53,201,115,.08);border-radius:99px;padding:5px 12px;margin-bottom:18px}
-  .badge-live .pulse{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.6s infinite}
+  /* ---------- hero ---------- */
+  .hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;padding:72px 0 56px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--green);font-size:12px;font-weight:700;
+    border:1px solid rgba(53,201,115,.3);background:rgba(53,201,115,.07);border-radius:99px;padding:5px 13px;margin-bottom:20px}
+  .eyebrow .pulse{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.6s infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
-  .hero h1{font-size:44px;font-weight:900;letter-spacing:-1px;line-height:1.05}
-  .hero h1 span{color:var(--red)}
-  .hero .sub{margin-top:14px;color:var(--muted);font-size:16px;max-width:480px}
-  .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
-  .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:13px;font-weight:700;font-size:14px;transition:transform .15s,box-shadow .15s}
-  .btn:hover{transform:translateY(-2px)}
-  .btn-primary{background:linear-gradient(135deg,var(--red),#ff6a4d);color:#fff;box-shadow:0 10px 28px rgba(255,67,86,.35)}
+  .hero h1{font-size:52px;font-weight:900;letter-spacing:-1.5px;line-height:1.04;background:linear-gradient(180deg,#fff,#b9c0cf);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero h1 em{font-style:normal;color:var(--red);-webkit-text-fill-color:var(--red)}
+  .hero .sub{margin-top:16px;color:var(--muted);font-size:16.5px;max-width:500px}
+  .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+  .btn{display:inline-flex;align-items:center;gap:9px;padding:14px 26px;border-radius:13px;font-weight:700;font-size:14.5px;cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s}
+  .btn:hover{transform:translateY(-2px);text-decoration:none}
+  .btn-primary{background:linear-gradient(135deg,var(--red),var(--red2));color:#fff;box-shadow:0 12px 32px rgba(255,67,86,.35)}
   .btn-ghost{background:var(--panel);border:1px solid var(--line2);color:var(--fg)}
   .btn-ghost:hover{background:var(--panel2)}
+  .stats{display:flex;gap:34px;margin-top:40px;flex-wrap:wrap}
+  .stat .n{font-size:24px;font-weight:800}
+  .stat .l{font-size:12px;color:var(--dim);letter-spacing:.4px}
 
-  /* OSD demo */
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:24px}
-  .osd-stage{position:relative;min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;overflow:hidden;border-radius:14px;background:linear-gradient(180deg,var(--bg2),var(--bg))}
+  /* hero mockup */
+  .mock{position:relative}
+  .frame{border:1px solid var(--line2);border-radius:18px;overflow:hidden;background:var(--panel);
+    box-shadow:var(--shadow);transform:perspective(1400px) rotateY(-4deg) rotateX(1.5deg)}
+  .frame .bar{display:flex;align-items:center;gap:6px;padding:11px 14px;border-bottom:1px solid var(--line);background:var(--bg2)}
+  .frame .bar i{width:11px;height:11px;border-radius:50%;display:inline-block}
+  .frame .bar .r{background:#ff5f57}.frame .bar .y{background:#febc2e}.frame .bar .g{background:#28c840}
+  .frame .bar span{margin-left:auto;font-size:11px;color:var(--dim);font-family:"Consolas",monospace}
+  .frame img{width:100%}
+  .float-chip{position:absolute;bottom:-20px;left:-18px;display:flex;align-items:center;gap:10px;
+    background:rgba(14,16,23,.94);border:1px solid var(--line2);border-radius:14px;padding:10px 16px;
+    box-shadow:0 16px 40px rgba(0,0,0,.55);animation:floaty 3.4s ease-in-out infinite}
+  .float-chip .chip-mark{width:34px;height:34px;border-radius:10px;background:rgba(255,67,86,.18);display:grid;place-items:center}
+  .float-chip .chip-mark svg{width:17px;height:17px;fill:var(--red)}
+  .float-chip .ct{font-size:13px;font-weight:800;color:var(--red)}
+  .float-chip .cs{font-size:9px;color:var(--dim);font-family:"Consolas",monospace}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+  /* ---------- strip trust ---------- */
+  .trust{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;padding:22px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);color:var(--dim);font-size:12.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+
+  /* ---------- section head ---------- */
+  .sect{padding:72px 0}
+  .sect-head{max-width:640px;margin-bottom:38px}
+  .sect-head .kicker{color:var(--red);font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+  .sect-head h2{font-size:32px;font-weight:900;letter-spacing:-.6px}
+  .sect-head p{color:var(--muted);margin-top:10px;font-size:15px}
+
+  /* ---------- app showcase ---------- */
+  .showcase{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
+  .showcase .frame{transform:none}
+  .points{display:grid;gap:16px}
+  .point{display:flex;gap:14px}
+  .point .ic{flex:none;width:40px;height:40px;border-radius:12px;background:var(--panel2);border:1px solid var(--line2);display:grid;place-items:center}
+  .point .ic svg{width:20px;height:20px;stroke:var(--green);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .point h4{font-size:14.5px;font-weight:800;margin-bottom:3px}
+  .point p{font-size:13px;color:var(--muted)}
+
+  /* ---------- OSD live demo ---------- */
+  .osd-stage{position:relative;background:linear-gradient(180deg,var(--bg2),var(--bg));border:1px solid var(--line);border-radius:var(--radius);padding:36px;display:flex;flex-direction:column;align-items:center;gap:20px;overflow:hidden}
+  .osd-label{color:var(--dim);font-size:12px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase}
   .mode-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
   .mode-btn{border:1px solid var(--line2);background:var(--panel2);color:var(--fg);font-weight:700;font-size:13px;
-    padding:10px 16px;border-radius:12px;cursor:pointer;transition:transform .12s,border-color .12s;font-family:inherit}
-  .mode-btn:hover{transform:translateY(-1px)}
+    padding:11px 18px;border-radius:12px;cursor:pointer;transition:transform .12s,border-color .12s,box-shadow .12s;font-family:inherit}
+  .mode-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.35)}
   .osd{position:fixed;top:64px;left:50%;transform:translate(-50%,-6px) scale(.92);opacity:0;pointer-events:none;
     display:flex;align-items:center;gap:14px;padding:14px 20px;border-radius:18px;
-    background:rgba(14,16,23,.92);border:1px solid var(--line2);box-shadow:0 24px 60px rgba(0,0,0,.55);
-    transition:opacity .18s cubic-bezier(.2,.7,.2,1), transform .24s cubic-bezier(.2,.7,.2,1);z-index:50}
+    background:rgba(14,16,23,.94);border:1px solid var(--line2);box-shadow:0 24px 60px rgba(0,0,0,.6);
+    transition:opacity .18s cubic-bezier(.2,.7,.2,1), transform .24s cubic-bezier(.2,.7,.2,1);z-index:60}
   .osd.show{opacity:1;transform:translate(-50%,0) scale(1)}
   .osd .mark{width:44px;height:44px;border-radius:13px;display:grid;place-items:center}
   .osd .mark svg{width:22px;height:22px;fill:#0b0d13}
   .osd .txt .t{font-size:17px;font-weight:800;letter-spacing:.5px}
   .osd .txt .s{font-size:9.5px;font-family:"Consolas",monospace;opacity:.7;margin-top:1px}
-  .gauge{width:210px;height:6px;border-radius:3px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.12);overflow:hidden;position:relative;margin-left:4px}
+  .osd .bt{margin-left:10px;display:flex;align-items:center;gap:10px}
+  .gauge{width:150px;height:6px;border-radius:3px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.12);overflow:hidden;position:relative}
   .gauge .fill{height:100%;width:0;border-radius:3px;transition:width .5s cubic-bezier(.2,.7,.2,1)}
   .gauge .scan{position:absolute;top:0;left:-42px;width:42px;height:100%;background:rgba(255,255,255,.35);filter:blur(2px);animation:scan .7s cubic-bezier(.2,.7,.2,1)}
-  @keyframes scan{to{left:212px}}
-  .osd .bt{margin-left:10px;display:flex;align-items:center;gap:10px}
-  .osd .bt .gauge{width:150px}
-  .osd-hint{margin-top:14px;color:var(--dim);font-size:12.5px}
+  @keyframes scan{to{left:192px}}
+  .osd-hint{margin-top:6px;color:var(--dim);font-size:12.5px}
 
-  /* sections */
-  .sect{margin-top:56px}
-  .sect h2{font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--dim);margin-bottom:20px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
-  .feat{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px}
+  /* ---------- features ---------- */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+  .feat{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px;transition:transform .15s,border-color .15s}
+  .feat:hover{transform:translateY(-3px);border-color:var(--line2)}
   .feat h3{font-size:14.5px;font-weight:800;display:flex;align-items:center;gap:9px;margin-bottom:8px}
   .feat p{color:var(--muted);font-size:13px}
   .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+  /* ---------- shortcuts / req ---------- */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:28px}
+  .panel h3{font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--dim);margin-bottom:18px}
   .kbd{background:var(--panel2);border:1px solid var(--line2);border-bottom-width:2px;border-radius:7px;
     padding:2px 9px;font-family:"Cascadia Mono","Consolas",monospace;font-size:12px;white-space:nowrap}
-  .shortcuts{display:grid;gap:10px;color:var(--muted);font-size:14px}
-  .note{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);color:var(--dim);font-size:12.5px}
+  .shortcuts{display:grid;gap:12px;color:var(--muted);font-size:14px}
+  .req ul{list-style:none;display:grid;gap:10px;color:var(--muted);font-size:14px}
+  .req li{display:flex;gap:10px;align-items:flex-start}
+  .req li::before{content:"✓";color:var(--green);font-weight:800}
 
-  @media (max-width:640px){
-    .hero h1{font-size:32px}
+  /* ---------- footer ---------- */
+  .footer{border-top:1px solid var(--line);padding:40px 0 56px;margin-top:24px}
+  .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:32px}
+  .footer h5{font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--dim);margin-bottom:12px}
+  .footer a{display:block;color:var(--muted);font-size:13.5px;padding:3px 0}
+  .footer a:hover{color:var(--fg)}
+  .footer .bottom{margin-top:36px;padding-top:20px;border-top:1px solid var(--line);color:var(--dim);font-size:12.5px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+
+  @media (max-width:880px){
+    .hero,.showcase{grid-template-columns:1fr;padding-top:48px}
+    .hero h1{font-size:38px}
+    .two{grid-template-columns:1fr}
+    .footer-grid{grid-template-columns:1fr}
     .osd{top:40px;padding:12px 16px}
     .osd .bt{display:none}
   }
 </style>
 </head>
 <body>
-<div class="wrap">
 
-  <div class="nav">
+<!-- ===== NAV ===== -->
+<div class="nav">
+  <div class="nav-in">
     <div class="brand">
       <span class="mark"><svg viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11L9.5 22 19.5 10H13L15.5 2Z"/></svg></span>
       AllSense Control
     </div>
-    <div class="links">
+    <div class="nav-links">
       <a href="#demo">Demo</a>
       <a href="#fitur">Fitur</a>
       <a href="#shortcut">Shortcut</a>
       <a href="https://github.com/Maxodus126/AllSense-Control">GitHub</a>
+      <a class="nav-cta" href="https://github.com/Maxodus126/AllSense-Control/releases/download/v1.0.0/setup.exe">Unduh</a>
     </div>
   </div>
+</div>
 
+<div class="wrap">
+
+  <!-- ===== HERO ===== -->
   <div class="hero">
-    <div class="copy">
-      <span class="badge-live"><span class="pulse"></span> v1.0.0 · siap unduh</span>
-      <h1>Kendalikan <span>daya</span> laptoplmu dalam sekejap.</h1>
-      <p class="sub">AllSense Control — panel ringkas untuk kecerahan, volume, dan mode daya Windows. Tanpa admin, tanpa driver vendor, dengan OSD ala laptop gaming.</p>
+    <div>
+      <span class="eyebrow"><span class="pulse"></span> v1.0.0 · siap unduh</span>
+      <h1>Kendalikan <em>daya</em><br>laptopmu.</h1>
+      <p class="sub">AllSense Control — panel ringkas untuk kecerahan, volume, dan mode daya Windows. Universal, tanpa admin, tanpa driver vendor, dengan OSD ala laptop gaming.</p>
       <div class="cta">
         <a class="btn btn-primary" href="https://github.com/Maxodus126/AllSense-Control/releases/download/v1.0.0/setup.exe">↓ Unduh setup.exe</a>
         <a class="btn btn-ghost" href="https://github.com/Maxodus126/AllSense-Control">Lihat Source</a>
       </div>
+      <div class="stats">
+        <div class="stat"><div class="n">4</div><div class="l">FITUR UTAMA</div></div>
+        <div class="stat"><div class="n">0</div><div class="l">PERLU ADMIN</div></div>
+        <div class="stat"><div class="n">100%</div><div class="l">API WINDOWS</div></div>
+      </div>
     </div>
 
-    <div class="card" style="flex:1;min-width:300px">
-      <div class="osd-stage" id="demo">
-        <div style="color:var(--dim);font-size:12.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase">Coba ganti mode — OSD muncul</div>
-        <div class="mode-row">
-          <button class="mode-btn" data-m="0">HEMAT DAYA</button>
-          <button class="mode-btn" data-m="1">BALANCED</button>
-          <button class="mode-btn" data-m="2">TURBO</button>
-        </div>
-        <div class="osd-hint">Shortcut bawaan: <span class="kbd">Ctrl+Alt+M</span> (bisa dikustom)</div>
+    <div class="mock">
+      <div class="frame">
+        <div class="bar"><i class="r"></i><i class="y"></i><i class="g"></i><span>AllSense Control</span></div>
+        <img src="app-ui.png" alt="Pratinjau antarmuka AllSense Control">
+      </div>
+      <div class="float-chip">
+        <span class="chip-mark"><svg viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11L9.5 22 19.5 10H13L15.5 2Z"/></svg></span>
+        <div><div class="ct">TURBO</div><div class="cs">PERFORMANCE</div></div>
       </div>
     </div>
   </div>
 
-  <div class="sect" id="fitur">
-    <h2>Fitur unggulan</h2>
-    <div class="grid">
-      <div class="feat"><h3><span class="dot" style="background:var(--amber)"></span>Mode Daya</h3><p>Hemat / Balanced / Turbo — pindah cepat via klik atau hotkey, dengan animasi OSD berwarna per mode.</p></div>
-      <div class="feat"><h3><span class="dot" style="background:var(--green)"></span>Kecerahan &amp; Volume</h3><p>Slider menyinkronkan kondisi asli perangkat dan ikut perubahan tombol Fn / OS.</p></div>
-      <div class="feat"><h3><span class="dot" style="background:var(--blue)"></span>Status Wi-Fi &amp; Bluetooth</h3><p>Indikator hidup/mati radio langsung dari Windows.</p></div>
-      <div class="feat"><h3><span class="dot" style="background:var(--red)"></span>Hotkey Kustom</h3><p>Ketik atau rekam kombinasi Anda sendiri; tersimpan permanen.</p></div>
-    </div>
+  <div class="trust">
+    <span>Windows 10/11</span><span>64-bit</span><span>.NET 10 self-contained</span><span>Tanpa driver vendor</span>
   </div>
 
-  <div class="sect" id="shortcut">
-    <h2>Shortcut</h2>
-    <div class="shortcuts card">
-      <span>Tampilkan / sembunyikan window — <span class="kbd">Ctrl+Alt+A</span></span>
-      <span>Ganti mode daya — <span class="kbd">Ctrl+Alt+M</span> · "span style="color:var(--dim)">dapat diubah / diketik bebas</span></span>
-    </div>
-  </div>
-
+  <!-- ===== APP SHOWCASE ===== -->
   <div class="sect">
-    <h2>Persyaratan</h2>
-    <div class="card" style="color:var(--muted);font-size:14px">Windows 10/11 · 64-bit · .NET 10 self-contained (tanpa runtime bawaan) · Universal, tanpa driver vendor.</div>
+    <div class="sect-head">
+      <div class="kicker">Tampilan</div>
+      <h2>Antarmuka nyata, bukan janji.</h2>
+      <p>Semua kontrol dalam satu panel ringkas yang menempel di sisi layar.</p>
+    </div>
+    <div class="showcase">
+      <div class="frame">
+        <div class="bar"><i class="r"></i><i class="y"></i><i class="g"></i><span>AllSense Control</span></div>
+        <img src="app-ui.png" alt="Tampilan aplikasi AllSense Control">
+      </div>
+      <div class="points">
+        <div class="point">
+          <span class="ic"><svg viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11L9.5 22 19.5 10H13L15.5 2Z"/></svg></span>
+          <div><h4>Mode daya sekali klik</h4><p>Hemat, Balanced, Turbo — berganti seketika.</p></div>
+        </div>
+        <div class="point">
+          <span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3v8M6.4 6.6a8 8 0 1 0 11.2 0"/></svg></span>
+          <div><h4>Slider kecerahan &amp; volume</h4><p>Menyinkronkan kondisi asli perangkat.</p></div>
+        </div>
+        <div class="point">
+          <span class="ic"><svg viewBox="0 0 24 24"><path d="M3 7.5h16v9H3ZM22 10.5v3"/></svg></span>
+          <div><h4>Status baterai &amp; layar</h4><p>Info AC/baterai, resolusi, dan refresh rate.</p></div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="note">© 2026 Maxodus · AllSense Control v1.0.0 · Lisensi: lihat perjanjian di installer.</div>
+  <!-- ===== OSD LIVE DEMO ===== -->
+  <div class="sect" id="demo">
+    <div class="sect-head">
+      <div class="kicker">Demo langsung</div>
+      <h2>Coba ganti mode — OSD muncul.</h2>
+      <p>Klik salah satu mode. Status akan muncul sebagai overlay ala laptop gaming — persis seperti di aplikasi.</p>
+    </div>
+    <div class="osd-stage">
+      <div class="osd-label">Klik untuk mencoba</div>
+      <div class="mode-row">
+        <button class="mode-btn" data-m="0">HEMAT DAYA</button>
+        <button class="mode-btn" data-m="1">BALANCED</button>
+        <button class="mode-btn" data-m="2">TURBO</button>
+      </div>
+      <div class="osd-hint">Shortcut bawaan: <span class="kbd">Ctrl+Alt+M</span> · dapat dikustom</div>
+    </div>
+  </div>
+
+  <!-- ===== FEATURES ===== -->
+  <div class="sect" id="fitur">
+    <div class="sect-head">
+      <div class="kicker">Fitur</div>
+      <h2>Segala yang diperlukan, tanpa gelembung.</h2>
+    </div>
+    <div class="grid">
+      <div class="feat"><h3><span class="dot" style="background:var(--amber)"></span>Mode Daya</h3><p>Hemat / Balanced / Turbo dengan animasi OSD berwarna per mode.</p></div>
+      <div class="feat"><h3><span class="dot" style="background:var(--green)"></span>Kecerahan &amp; Volume</h3><p>Slider menyinkronkan kondisi asli perangkat, ikut Fn/OS.</p></div>
+      <div class="feat"><h3><span class="dot" style="background:var(--blue)"></span>Wi-Fi &amp; Bluetooth</h3><p>Indikator hidup/mati radio langsung dari Windows.</p></div>
+      <div class="feat"><h3><span class="dot" style="background:var(--red)"></span>Hotkey Kustom</h3><p>Ketik atau rekam kombinasi sendiri; tersimpan permanen.</p></div>
+    </div>
+  </div>
+
+  <!-- ===== SHORTCUT / REQUIREMENTS ===== -->
+  <div class="sect" id="shortcut">
+    <div class="two">
+      <div class="panel">
+        <h3>Shortcut</h3>
+        <div class="shortcuts">
+          <span>Tampilkan / sembunyikan window — <span class="kbd">Ctrl+Alt+A</span></span>
+          <span>Ganti mode daya — <span class="kbd">Ctrl+Alt+M</span> · <span style="color:var(--dim)">bisa diketik bebas</span></span>
+        </div>
+      </div>
+      <div class="panel req">
+        <h3>Persyaratan</h3>
+        <ul>
+          <li>Windows 10 / 11, 64-bit</li>
+          <li>.NET 10 self-contained — tanpa perlu install runtime</li>
+          <li>Universal, tanpa driver vendor, tanpa admin</li>
+          <li>Tidak mengumpulkan data pribadi</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
 </div>
 
+<!-- ===== FOOTER ===== -->
+<div class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="brand" style="margin-bottom:12px">
+          <span class="mark"><svg viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11L9.5 22 19.5 10H13L15.5 2Z"/></svg></span>
+          AllSense Control
+        </div>
+        <p style="color:var(--muted);font-size:13.5px;max-width:320px">Panel kontrol modern untuk kecerahan, volume, dan mode daya Windows — dikembangkan oleh Maxodus.</p>
+      </div>
+      <div>
+        <h5>Produk</h5>
+        <a href="#demo">Demo</a>
+        <a href="#fitur">Fitur</a>
+        <a href="#shortcut">Shortcut</a>
+      </div>
+      <div>
+        <h5>Sumber</h5>
+        <a href="https://github.com/Maxodus126/AllSense-Control">GitHub</a>
+        <a href="https://github.com/Maxodus126/AllSense-Control/releases">Rilis</a>
+        <a href="https://maxodus126.github.io/ALL-SENSE/demo.html">Demo lama</a>
+      </div>
+    </div>
+    <div class="bottom">
+      <span>© 2026 Maxodus · AllSense Control v1.0.0</span>
+      <span>Universal · bertenaga daya Windows · tanpa driver vendor</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== OSD overlay ===== -->
 <div class="osd" id="osd">
   <span class="mark" id="osdMark"><svg viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11L9.5 22 19.5 10H13L15.5 2Z"/></svg></span>
   <div class="txt">
@@ -187,7 +355,6 @@
     fill.style.boxShadow = `0 0 12px ${M.c[0]}`;
     fill.style.width = '0px';
     osd.classList.add('show');
-    /* paksa reflow lalu isi gauge */
     requestAnimationFrame(()=> requestAnimationFrame(()=> fill.style.width = (M.g*100)+'px'));
     clearTimeout(hideT);
     hideT = setTimeout(()=> osd.classList.remove('show'), 1800);
