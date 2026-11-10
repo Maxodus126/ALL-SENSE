@@ -2,477 +2,78 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>AllSense Control — Pusat Kendali Laptop Windows</title>
-<meta name="description" content="AllSense Control: universal laptop control center untuk Windows. Power mode AC/DC satu klik, suhu live sistem/GPU/RAM, hotkey global, update lewat GitHub. WPF/.NET 8, tanpa admin.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Russo+One&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AllSense Control — Maxodus</title>
 <style>
-/* ============================================================
-   AllSense Control — landing page, gaya "game launch".
-   Token warna = App.xaml asli: #070B12 bg, #111925 panel,
-   #FF2D4D merah, #45C8F0 cyan, #34C98F hijau.
-   Tanpa gambar tangkapan layar: konsol hero dibangun CSS murni.
-   ============================================================ */
-:root{
-  --bg:#070B12;
-  --surface:#0C121C;
-  --surface2:#121D2B;
-  --surface3:#172332;
-  --panel:#111925;
-  --panel2:#172230;
-  --panel3:#1E2C3D;
-  --line:#22334A;
-  --line2:#2D3A55;
-  --fg:#EAF0F8;
-  --muted:#AEBDD3;
-  --dim:#6F7F9A;
-  --red:#FF2D4D;
-  --reddeep:#D40F2E;
-  --redburn:#9C0A24;
-  --cyan:#45C8F0;
-  --green:#34C98F;
-  --amber:#F0AB3D;
-  --display:"Russo One","Chakra Petch",system-ui,sans-serif;
-  --head:"Chakra Petch","Segoe UI",system-ui,sans-serif;
-  --body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
-  --mono:"IBM Plex Mono","Consolas",monospace;
-  color-scheme:dark;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;overflow-x:clip}
-body{
-  background:var(--bg); color:var(--fg);
-  font-family:var(--body); font-size:16px; line-height:1.55;
-  -webkit-font-smoothing:antialiased;
-  overflow-x:hidden;
-}
-::selection{background:rgba(255,45,77,.28)}
-a{color:inherit;text-decoration:none}
-.wrap{max-width:1120px;margin-inline:auto;padding-inline:32px}
-.pad{padding-block:72px}
-.hairline{border-top:1px solid var(--line)}
-img{max-width:100%;display:block}
-
-/* ---------- latar: glow merah + grid + noise ---------- */
-.bgfx{position:fixed;inset:0;z-index:-1;pointer-events:none;background:
-  radial-gradient(1100px 720px at 85% -12%,rgba(255,45,77,.12),transparent 58%),
-  radial-gradient(900px 580px at -10% 110%,rgba(69,200,240,.08),transparent 55%),
-  linear-gradient(180deg,#0F1723 0%,var(--bg) 30%);}
-.bgfx::after,
-.bgfx::before{content:"";position:absolute;inset:0;opacity:.5;
-  background-image:
-    linear-gradient(var(--line) 1px,transparent 1px),
-    linear-gradient(90deg,var(--line) 1px,transparent 1px);
-  background-size:44px 44px;
-  -webkit-mask-image:radial-gradient(720px 480px at 50% 0%,#000 30%,transparent 75%);
-  mask-image:radial-gradient(720px 480px at 50% 0%,#000 30%,transparent 75%);
-}
-.bgfx::before{background-image:radial-gradient(rgba(255,255,255,.028) 1px,transparent 1px);
-  background-size:3px 3px;mix-blend-mode:overlay;}
-
-/* ---------- topbar ---------- */
-.topnav{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 84%,transparent);
-  backdrop-filter:blur(12px);border-bottom:1px solid var(--line);}
-.topnav .wrap{display:flex;align-items:center;gap:24px;height:68px}
-.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:16px;letter-spacing:.04em}
-.brand .mark{width:26px;height:26px;flex:none;position:relative}
-.brand .mark svg{position:absolute;inset:0}
-.brand .tag{font-family:var(--mono);font-weight:400;font-size:9.5px;color:var(--dim);letter-spacing:.14em;text-transform:uppercase;margin-left:4px}
-.nav{display:flex;gap:4px;margin-left:auto;align-items:center}
-.nav a{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--muted);padding:7px 11px;border-radius:5px;border:1px solid transparent;transition:color .15s,border-color .15s}
-.nav a:hover{color:var(--fg);border-color:var(--line2)}
-.cta-btn{font-family:var(--display);font-weight:600;font-size:14px;letter-spacing:.03em;background:linear-gradient(180deg,var(--red),var(--reddeep));border:none;border-radius:9px;padding:12px 24px;color:#fff;box-shadow:0 0 0 1px rgba(255,45,77,.25),0 8px 24px -10px rgba(255,45,77,.65);cursor:pointer;transition:transform .12s,filter .15s}
-.cta-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
-.cta-btn:active{transform:translateY(1px)}
-
-/* ---------- hero (device mockup) ---------- */
-.hero{position:relative;max-width:1120px;margin-inline:auto;padding:128px 32px 0;display:grid;grid-template-columns:1.06fr .94fr;gap:56px;align-items:center}
-.hero-copy .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--red);margin-bottom:24px}
-.hero-copy .eyebrow::before{content:"";width:7px;height:7px;background:var(--red);box-shadow:0 0 0 3px rgba(255,45,77,.18);animation:blink 2.4s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
-.hero-copy h1{font-family:var(--display);font-weight:700;font-size:clamp(46px,5.8vw,72px);line-height:1.02;letter-spacing:-.015em;margin-top:12px}
-.hero-copy .sub{color:var(--muted);font-size:17.5px;max-width:36em;margin-top:28px;line-height:1.65}
-.hero-facts{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px}
-.hero-fact{font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;color:var(--muted);border:1px solid var(--line);border-radius:20px;padding:7px 16px;background:var(--surface2)}
-
-/* Device mockup tanpa screenshot */
-.hero-mock{position:relative;z-index:2;width:calc(100% - 48px);margin-inline:auto;transform:perspective(1200px) rotateY(-6deg) rotateX(2deg);transition:transform .3s cubic-bezier(.2,.7,.2,1);box-shadow:0 40px 80px -30px rgba(0,0,0,.7)}
-.hero-mock:hover{transform:perspective(1200px) rotateY(-2deg) rotateX(1deg)}
-.hero-mock::before{content:"";position:absolute;inset:-20px;border-radius:14px;background:linear-gradient(140deg,var(--red),var(--reddeep));opacity:.35;filter:blur(26px);z-index:-1;animation:pulse 4s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:.25}50%{opacity:.45}}
-.mock-frame{border:1px solid var(--line2);border-radius:12px;overflow:hidden;background:var(--panel);box-shadow:
-  0 20px 40px -16px rgba(0,0,0,.6),
-  0 0 0 1px rgba(0,0,0,.45),
-  inset 0 1px 0 rgba(255,255,255,.04),
-  0 0 40px -12px rgba(255,45,77,.28)}
-.mock-content{padding:24px;display:flex;flex-direction:column;gap:20px}
-.mock-header{display:flex;gap:8px}
-.mock-header .dot{width:10px;height:10px;border-radius:50%}
-.mock-header .dot:nth-child(1){background:#FF2D4D}
-.mock-header .dot:nth-child(2){background:#f0ab3d}
-.mock-header .dot:nth-child(3){background:#34C98F}
-.mock-header .title{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-left:8px;letter-spacing:.04em}
-.mock-header .live-badge{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--red);letter-spacing:.12em;text-transform:uppercase}
-.mock-header .live-badge::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--red);animation:blink 1.6s infinite}
-.mock-body{display:flex;gap:20px;flex-wrap:wrap}
-.mock-sidebar{width:80px;display:flex;flex-direction:column;gap:8px}
-.mock-sidebar .nav-item{height:40px;background:rgba(255,255,255,.06);border-radius:6px;border-left:3px solid var(--red);opacity:.85}
-.mock-sidebar .nav-item:nth-child(2){border-left-color:transparent}
-.mock-sidebar .nav-item:nth-child(3){border-left-color:transparent}
-.mock-sidebar .nav-group{height:12px;background:rgba(255,255,255,.08);border-radius:2px;margin:4px 0}
-.mock-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:18px}
-.gauge-row{display:flex;align-items:center;gap:14px}
-.gauge-bar{height:8px;flex:1;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden}
-.gauge-fill{background:var(--red);height:100%;border-radius:4px;animation:fillBar 2s ease-out forwards}
-@keyframes fillBar{from{width:0}}
-.gauge-label{font-family:var(--mono);font-size:11px;color:var(--dim);min-width:88px}
-.mock-power{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:8px;padding:14px}
-.seg-btn-row{display:flex;gap:10px}
-.seg-btn{padding:10px 14px;background:var(--panel2);border:1px solid var(--line);border-radius:8px;font-family:var(--mono);font-size:12px;color:var(--muted);text-align:center;transition:border-color .15s}
-.seg-btn:hover{border-color:var(--line2)}
-.seg-btn.on{background:linear-gradient(150deg,rgba(255,45,77,.2),rgba(255,45,77,.04));border-color:rgba(255,45,77,.5);color:var(--red)}
-.mock-footer{display:flex;align-items:center;gap:10px;margin-top:auto;padding-top:12px;border-top:1px solid var(--line)}
-.mock-footer .led{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(52,201,143,.15),0 0 14px rgba(52,201,143,.5)}
-.mock-footer .status{font-family:var(--mono);font-size:11px;color:var(--muted)}
-.mock-caption{margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--dim);text-align:center}
-
-/* ---------- stats strip ---------- */
-.stats-wrap{background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.stats-track{display:flex;gap:56px;justify-content:space-around;padding-block:30px;font-family:var(--mono);font-size:14px;color:var(--muted);letter-spacing:.08em}
-.stats-track .highlight{color:var(--red);font-weight:600}
-
-/* ---------- fitur showcase ---------- */
-.showcase{margin-top:80px}
-.showcase-row{display:flex;align-items:center;gap:64px;margin-bottom:80px}
-.showcase-row:last-child{margin-bottom:0}
-.showcase-row.reverse{flex-direction:row-reverse}
-.feature-copy{flex:1;min-width:0}
-.feature-copy .tag{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--red);margin-bottom:14px;display:inline-block}
-.feature-copy h3{font-family:var(--display);font-weight:600;font-size:29px;line-height:1.22;margin-bottom:16px}
-.feature-copy p{color:var(--muted);font-size:16px;line-height:1.75;max-width:54ch}
-.feature-copy .chips{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
-.chip{font-family:var(--mono);font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:20px;padding:7px 14px;background:var(--surface3)}
-.icon-box{width:84px;height:84px;flex:none;border-radius:14px;background:linear-gradient(150deg,var(--panel3),var(--surface3));border:1px solid var(--line);display:grid;place-items:center;color:var(--red);box-shadow:0 2px 8px rgba(0,0,0,.45)}
-.icon-box svg{width:34px;height:34px;fill:none;stroke:var(--red);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-
-/* ---------- demo interaktif ---------- */
-.demo-section{margin-top:96px;max-width:1120px;margin-inline:auto;position:relative;border:1px solid var(--line2);border-radius:14px;background:linear-gradient(180deg,var(--surface3),var(--bg) 90%);box-shadow:0 46px 84px -24px rgba(0,0,0,.75),0 0 0 1px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.04)}
-.demo-header{display:flex;align-items:center;gap:12px;padding:20px 28px;border-bottom:1px solid var(--line);background:rgba(0,0,0,.3)}
-.demo-header .dot{width:10px;height:10px;border-radius:50%}
-.demo-header .dot:nth-child(1){background:var(--red)}
-.demo-header .dot:nth-child(2){background:#f0ab3d}
-.demo-header .dot:nth-child(3){background:var(--green)}
-.demo-header .title{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-left:8px;letter-spacing:.04em}
-.demo-header .live-badge{margin-left:auto;display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;color:var(--red);letter-spacing:.12em;text-transform:uppercase}
-.demo-header .live-badge::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--red);animation:blink 1.6s infinite}
-.demo-iframe{width:100%;height:780px;border:none;display:block}
-
-/* ---------- CTA ---------- */
-.cta-wrap{margin-top:96px;padding-bottom:120px;text-align:center}
-.cta-wrap .tag{font-family:var(--mono);font-size:11.5px;color:var(--red);letter-spacing:.14em;text-transform:uppercase;margin-bottom:18px;display:inline-block}
-.cta-wrap .headline{font-family:var(--display);font-weight:700;font-size:clamp(34px,4.6vw,52px);line-height:1.14;margin-bottom:24px}
-.cta-wrap .sub{color:var(--muted);font-size:16px;max-width:36em;margin:0 auto 32px}
-.cta-wrap .btn-primary{display:inline-flex;align-items:center;gap:10px;padding:14px 32px;font-family:var(--display);font-weight:600;font-size:16px;background:linear-gradient(180deg,var(--red),var(--reddeep));color:#fff;border:none;border-radius:10px;cursor:pointer;box-shadow:0 0 0 1px rgba(255,45,77,.2),0 12px 32px -12px rgba(255,45,77,.55);transition:transform .15s,filter .15s}
-.cta-wrap .btn-primary:hover{transform:translateY(-2px);filter:brightness(1.08)}
-.cta-wrap .btn-primary:active{transform:translateY(1px)}
-.cta-wrap .meta{margin-top:24px;display:flex;justify-content:center;gap:24px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--muted)}
-.cta-wrap .meta b{color:var(--fg);font-weight:500}
-
-/* ---------- status ringkas ---------- */
-.sec-title{font-family:var(--display);font-weight:700;font-size:clamp(26px,3.2vw,36px);line-height:1.15}
-.sec-sub{color:var(--muted);margin-top:14px;font-size:16px;line-height:1.7;max-width:40em}
-.statusgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:44px}
-.st{border:1px solid var(--line);border-radius:12px;padding:24px;display:flex;gap:18px;align-items:flex-start;background:var(--surface)}
-.led{width:12px;height:12px;border-radius:50%;flex:none;margin-top:5px}
-.led.g{background:var(--green);box-shadow:0 0 0 4px rgba(52,201,143,.15),0 0 18px rgba(52,201,143,.5)}
-.led.y{background:#f0ab3d;box-shadow:0 0 0 4px rgba(240,171,61,.15),0 0 18px rgba(240,171,61,.5)}
-.led.r{background:var(--red);box-shadow:0 0 0 4px rgba(255,45,77,.15),0 0 18px rgba(255,45,77,.5)}
-.led.c{background:var(--cyan);box-shadow:0 0 0 4px rgba(69,200,240,.15)}
-.st h4{font-family:var(--display);font-weight:600;font-size:14.5px;margin-bottom:5px}
-.st p{color:var(--muted);font-size:13px}
-.st .tag{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;display:inline-block;margin-bottom:8px;padding:3px 8px;border-radius:4px}
-.st .tag.g{color:var(--green);background:rgba(52,201,143,.1)}
-.st .tag.y{color:#f0ab3d;background:rgba(240,171,61,.1)}
-.st .tag.r{color:var(--red);background:rgba(255,45,77,.1)}
-.st .tag.c{color:var(--cyan);background:rgba(69,200,240,.1)}
-
-/* ---------- footer ---------- */
-.footer{border-top:1px solid var(--line);padding-block:40px}
-.footer .wrap{display:flex;flex-wrap:wrap;gap:14px;align-items:center;color:var(--dim);font-family:var(--mono);font-size:11.5px}
-.footer .r,.footer .links{margin-left:auto;display:flex;gap:18px}
-.footer a{color:var(--muted);transition:color .15s}
-.footer a:hover{color:var(--red)}
-
-/* ---------- responsive ---------- */
-@media (max-width:900px){
-  .hero{grid-template-columns:1fr;text-align:center;gap:40px}
-  .hero-facts{justify-content:center}
-  .showcase-row,.showcase-row.reverse{flex-direction:column}
-  .showcase-row{gap:40px}
-  .showcase-row .icon-box{align-self:center}
-  .feature-copy h3{text-align:center}
-  .feature-copy .chips{justify-content:center}
-  .feature-copy p{max-width:none;margin-inline:auto;text-align:center}
-  .demo-iframe{height:560px}
-}
-@media (max-width:700px){
-  .statusgrid{grid-template-columns:1fr}
-}
-@media (max-width:560px){
-  .wrap,.hero{padding-inline:20px}
-  .nav{display:none}
-  .topnav .wrap{gap:10px}
-  .cta-btn{padding:10px 16px;font-size:12.5px}
-  .stats-track{flex-wrap:wrap;justify-content:center;gap:24px}
-  .demo-iframe{height:420px}
-  .hero{padding:56px 20px 0}
-  .hero-mock{width:100%;transform:none}
-  .showcase-row{gap:36px}
-}
+  :root{
+    --bg:#0e1017; --panel:#161a23; --panel2:#1c212d; --line:#21ffffff;
+    --fg:#eef0f5; --muted:#97a0ae; --dim:#596272;
+    --red:#ff4356; --blue:#4d8dff; --green:#35c973; --amber:#ffb020;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--fg);font-family:"Segoe UI",system-ui,sans-serif;line-height:1.6;min-height:100vh}
+  a{color:var(--blue);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:860px;margin:0 auto;padding:64px 24px 80px}
+  .badge{width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,var(--red),#ff8a5b);
+    display:grid;place-items:center;box-shadow:0 10px 34px rgba(255,67,86,.35);margin-bottom:22px}
+  .badge svg{width:34px;height:34px;fill:#0e1017}
+  h1{font-size:34px;font-weight:800;letter-spacing:-.5px}
+  .tag{color:var(--muted);font-size:14px;margin-top:4px}
+  .tag b{color:var(--amber);font-weight:600}
+  .lead{color:var(--muted);font-size:15px;max-width:560px;margin-top:18px}
+  .btns{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+  .btn{display:inline-block;padding:12px 22px;border-radius:12px;font-weight:600;font-size:14px;transition:transform .15s}
+  .btn:hover{transform:translateY(-1px);text-decoration:none}
+  .btn-primary{background:var(--red);color:#fff;box-shadow:0 8px 24px rgba(255,67,86,.35)}
+  .btn-ghost{background:var(--panel);border:1px solid var(--line);color:var(--fg)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:44px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px}
+  .card h3{font-size:15px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .card p{color:var(--muted);font-size:13px}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+  .sect{margin-top:48px}
+  .sect h2{font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--dim);margin-bottom:14px}
+  .kbd{background:var(--panel2);border:1px solid var(--line);border-bottom-width:2px;border-radius:7px;
+    padding:2px 8px;font-family:"Cascadia Mono","Consolas",monospace;font-size:12px}
+  .note{color:var(--dim);font-size:12.5px;margin-top:40px;border-top:1px solid var(--line);padding-top:18px}
 </style>
 </head>
 <body>
-<div class="bgfx"></div>
-<header class="topnav">
-  <div class="wrap">
-    <div class="brand">
-      <span class="mark">
-        <svg viewBox="0 0 26 26" fill="none">
-          <circle cx="13" cy="13" r="10" stroke="rgba(45,58,85,.9)" stroke-width="2.4"/>
-          <path d="M13 13 L19 9" stroke="#FF2D4D" stroke-width="2.4" stroke-linecap="round"/>
-          <circle cx="13" cy="13" r="2.6" fill="#FF2D4D"/>
-          <circle cx="19" cy="9" r="1.8" fill="#45C8F0"/>
-        </svg>
-      </span>
-      AllSense<span class="tag">Control</span>
-    </div>
-    <nav class="nav">
-      <a href="#hero">Tampilan</a>
-      <a href="#showcase">Halaman</a>
-      <a href="#demo">Fitur</a>
-      <a href="#status">Status</a>
-    </nav>
-    <a href="#cta" class="cta-btn">Unduh</a>
+<div class="wrap">
+  <div class="badge" aria-hidden="true">
+    <svg viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11L9.5 22 19.5 10H13L15.5 2Z"/></svg>
   </div>
-</header>
-<main>
-  <!-- HERO -->
-  <section class="hero" id="hero">
-    <div class="hero-copy">
-      <div class="eyebrow">v1.3.2 · rilis stabil</div>
-      <h1>Kontrol laptop dalam satu klik yang kuat.</h1>
-      <p class="sub">AC/DC terpisah — Efisiensi/Balanced/Performa — tersimpan di profil Windows, sambil zona termal ACPI, sensor GPU core, dan beban RAM terbaca tiap 2 detik, tanpa admin, tanpa ribet.</p>
-      <div class="hero-facts">
-        <span class="hero-fact">Windows 10/11 · x64</span>
-        <span class="hero-fact">.NET 8 terbungkus</span>
-        <span class="hero-fact">Tanpa admin / UAC</span>
-        <span class="hero-fact">Self-contained · 1 file</span>
-      </div>
-    </div>
-    <div class="hero-mock">
-      <div class="mock-frame">
-        <div class="mock-content">
-          <div class="mock-header">
-            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-          </div>
-          <div class="mock-body">
-            <div class="mock-sidebar">
-              <div class="nav-item active"></div>
-              <div class="nav-item"></div>
-              <div class="nav-item"></div>
-              <div class="nav-group"></div>
-              <div class="nav-item"></div>
-              <div class="nav-item"></div>
-            </div>
-            <div class="mock-main">
-              <div class="gauge-row">
-                <div class="gauge-bar"><div class="gauge-fill" style="width:28%"></div></div>
-                <div class="gauge-label">SISTEM 28°C</div>
-              </div>
-              <div class="gauge-row">
-                <div class="gauge-bar"><div class="gauge-fill" style="width:53%"></div></div>
-                <div class="gauge-label">GPU CORE 53°C</div>
-              </div>
-              <div class="gauge-row">
-                <div class="gauge-bar"><div class="gauge-fill" style="width:82%"></div></div>
-                <div class="gauge-label">RAM 82%</div>
-              </div>
-              <div class="mock-power">
-                <div class="seg-btn-row">
-                  <div class="seg-btn on">Efisiensi</div>
-                  <div class="seg-btn">Balanced</div>
-                  <div class="seg-btn">Performa</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="mock-footer">
-            <div class="led green"></div>
-            <span class="status">Sensor aktif</span>
-          </div>
-        </div>
-      </div>
-      <div class="mock-caption">AllSense Control — dashboard yang tampak nyata dalam browser Anda</div>
-    </div>
-  </section>
+  <h1>AllSense Control</h1>
+  <div class="tag">v1.0.0 · dikembangkan oleh <b>Maxodus</b></div>
+  <p class="lead">Panel kontrol ringkas untuk kecerahan, volume, dan mode daya Windows — universal, tanpa admin, tanpa driver vendor.</p>
 
-  <!-- STATS -->
-  <section class="stats-wrap">
-    <div class="wrap">
-      <div class="stats-track">
-        <span>OS <span class="highlight">Windows 11 x64</span></span>
-        <span>Framework <span class="highlight">.NET 8</span></span>
-        <span>Hotkey <span class="highlight">Ctrl+Alt+A</span></span>
-        <span>Polling <span class="highlight">Live</span></span>
-        <span>Selftest <span class="highlight">Lolos</span></span>
-      </div>
-    </div>
-  </section>
-
-  <!-- SHOWCASE -->
-  <section class="showcase" id="showcase">
-    <div class="wrap">
-      <div class="showcase-row">
-        <div class="icon-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
-        </div>
-        <div class="feature-copy">
-          <div class="tag">MODE DAYA</div>
-          <h3>Power Mode AC/DC — Tersimpan di Windows</h3>
-          <p>Ganti Efisiensi/Balanced/Performa dalam satu klik, terpisah untuk colokan & baterai, tanpa reinstall. Dua keluarga GUID: PowerSetUserConfigured{AC,DC}PowerMode → Efficiency/Balanced/Performance; PowerSetActiveScheme → skema fallback.</p>
-          <div class="chips"><span class="chip">AC</span><span class="chip">DC</span><span class="chip">Profil</span></div>
-        </div>
-      </div>
-      <div class="showcase-row reverse">
-        <div class="icon-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M4.5 12h3l1.5-4 2 8 1.5-6 1 2h4.5"/></svg>
-        </div>
-        <div class="feature-copy">
-          <div class="tag">SUHU SISTEM</div>
-          <h3>Suhu jujur (zona ACPI) + GPU core</h3>
-          <p>Sistem baca zona termal ACPI (~28°C idle), GPU baca sensor <b>core</b>, bukan <code>Hot Spot</code>/<code>Memory Junction</code> yang jauh lebih panas. Guard <code>!float.IsNaN(tg)</code> mencegah NaN.</p>
-          <div class="chips"><span class="chip">ACPI</span><span class="chip">Core sensor</span><span class="chip">5 detik interval</span></div>
-        </div>
-      </div>
-      <div class="showcase-row">
-        <div class="icon-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h10M7 13h6"/></svg>
-        </div>
-        <div class="feature-copy">
-          <div class="tag">HOTKEY GLOBAL</div>
-          <h3>Ctrl+Alt+A (custom di Settings)</h3>
-          <p>Bisa di-custom di Settings; rollback otomatis bila bentrok; daftar ulang dengan <code>SaveSettings</code>. No admin needed.</p>
-          <div class="chips"><span class="chip">RegisterHotKey</span><span class="chip">Custom</span><span class="chip">Auto-rollback</span></div>
-        </div>
-      </div>
-      <div class="showcase-row reverse">
-        <div class="icon-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
-        </div>
-        <div class="feature-copy">
-          <div class="tag">RINGAN & MINIMAL</div>
-          <h3>Native WPF, no WebView2</h3>
-          <p>±200 MB RAM, no admin, no install, no UAC prompt. Single-file self-contained executable.</p>
-          <div class="chips"><span class="chip">WPF native</span><span class="chip">No WebView2</span><span class="chip">Single file</span></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- INTERAKTIF DEMO -->
-  <section class="demo-section" id="demo">
-    <div class="demo-header">
-      <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-      <span class="title">AllSense.App — MainWindow.xaml.cs</span>
-      <span class="live-badge">Live</span>
-    </div>
-    <iframe class="demo-iframe" src="demo.html" title="Demo interaktif AllSense Control" loading="lazy" allowfullscreen></iframe>
-  </section>
-
-  <!-- STATUS (singkat) -->
-  <section class="pad hairline" id="status">
-    <div class="wrap">
-      <div class="section">
-        <h3 class="sec-title">Alasan mengapa AllSense Control beda</h3>
-        <p class="sec-sub">Empat estado, empat indikator — jujur tentang apa yang terbaca.</p>
-      </div>
-      <div class="statusgrid">
-        <div class="st">
-          <span class="led g"></span>
-          <div>
-            <span class="tag g">Sehat</span>
-            <h4>Sensor terbaca, suhu normal</h4>
-            <p>WMI merespons, zona termal ada, GPU core terbaca. Status hijau dengan angka live tiap 5 detik.</p>
-          </div>
-        </div>
-        <div class="st">
-          <span class="led r"></span>
-          <div>
-            <span class="tag r">Sensor tiada</span>
-            <h4>Zona termal / sensor GPU absen</h4>
-            <p>Nilai NaN dibuang, tidak dihitung. Status merah hanya muncul saat benar-benar tidak ada data.</p>
-          </div>
-        </div>
-        <div class="st">
-          <span class="led c"></span>
-          <div>
-            <span class="tag c">Mode asing</span>
-            <h4>GUID mode tidak dikenali</h4>
-            <p>Bila API mode modern menolak (kode 87), AllSense jatuh ke skema legacy. Dua keluarga GUID tidak pernah dipertukarkan.</p>
-          </div>
-        </div>
-        <div class="st">
-          <span class="led y"></span>
-          <div>
-            <span class="tag y">Panas</span>
-            <h4>Melebihi ambang aman</h4>
-            <p>Bacaan menembus ambang (mis. GPU core > 80°C). AllSense menyorot sensor yang panas, bukan menghiburmu.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA -->
-  <section class="cta-wrap" id="cta">
-    <div class="wrap">
-      <div class="tag">Bisa langsung dijalankan</div>
-      <h2 class="headline">Bawa laptop Anda ke level selanjutnya</h2>
-      <p class="sub">AllSense Control — satu-satunya power mode + dashboard suhu yang benar-benar native Windows, tanpa cloud, tanpa login, tanpa admin.</p>
-      <a href="https://github.com/Maxodus126/ALL-SENSE/releases/latest/download/AllSense-Setup.exe" class="btn-primary" target="_blank" rel="noopener">
-        Unduh &amp; Pasang Installer
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:6px"><path d="M12 5v14m0 0l-7-7m7 7l7-7"/></svg>
-      </a>
-      <div class="meta">
-        <span>v1.3.2 · Windows 10/11 x64 · Installer per-user (tanpa admin)</span>
-        <span>· Selftest lolos · exit 0 · juga tersedia <a href="https://github.com/Maxodus126/ALL-SENSE/releases/latest/download/AllSense-x64.exe">versi portabel</a></span>
-      </div>
-    </div>
-  </section>
-</main>
-
-<footer class="footer">
-  <div class="wrap">
-    <div class="brand">AllSense Control · v1.3.2</div>
-    <div class="links">
-      <a href="#hero">Tampilan</a>
-      <a href="#showcase">Halaman</a>
-      <a href="#demo">Fitur</a>
-      <a href="#status">Status</a>
-      <a href="#cta">Unduh</a>
-      <a href="https://github.com/Maxodus126/ALL-SENSE" target="_blank" rel="noopener">GitHub</a>
-    </div>
+  <div class="btns">
+    <a class="btn btn-primary" href="https://github.com/Maxodus126/AllSense-Control/releases">Unduh setup.exe</a>
+    <a class="btn btn-ghost" href="https://github.com/Maxodus126/AllSense-Control">Lihat Source</a>
   </div>
-</footer>
 
-<script>
-// scroll-reveal sederhana
-const obs = new IntersectionObserver((entries) => {
-  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('active'); obs.unobserve(e.target); } });
-}, { threshold: .12 });
-document.querySelectorAll('.scroll-reveal').forEach(el => obs.observe(el));
-</script>
+  <div class="grid">
+    <div class="card"><h3><span class="dot" style="background:var(--amber)"></span>Mode Daya</h3><p>Hemat / Balanced / Turbo — pindah cepat lewat klik atau hotkey, dengan OSD animasi ala laptop gaming.</p></div>
+    <div class="card"><h3><span class="dot" style="background:var(--green)"></span>Kecerahan &amp; Volume</h3><p>Slider menyinkronkan kondisi asli perangkat dan ikut perubahan tombol Fn / OS.</p></div>
+    <div class="card"><h3><span class="dot" style="background:var(--blue)"></span>Status Wi-Fi &amp; Bluetooth</h3><p>Indikator hidup/mati radio secara langsung dari Windows.</p></div>
+    <div class="card"><h3><span class="dot" style="background:var(--red)"></span>Hotkey Kustom</h3><p>Ketik atau rekam kombinasi Anda sendiri; tersimpan permanen.</p></div>
+  </div>
+
+  <div class="sect">
+    <h2>Shortcut bawaan</h2>
+    <p style="color:var(--muted);font-size:14px">
+      Tampilkan / sembunyikan window — <span class="kbd">Ctrl+Alt+A</span><br>
+      Ganti mode daya — <span class="kbd">Ctrl+Alt+M</span> <span style="color:var(--dim)">(ubah sesuai keinginan)</span>
+    </p>
+  </div>
+
+  <div class="sect">
+    <h2>Persyaratan</h2>
+    <p style="color:var(--muted);font-size:14px">Windows 10/11 · 64-bit · .NET 10 self-contained (tanpa runtime bawaan).</p>
+  </div>
+
+  <div class="note">© 2026 Maxodus · Universal, bertenaga daya Windows, tanpa driver vendor · Lisensi: lihat perjanjian di installer.</div>
+</div>
 </body>
 </html>
